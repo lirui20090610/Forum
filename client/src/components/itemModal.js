@@ -11,11 +11,16 @@ import {
 } from 'reactstrap';
 import { connect } from 'react-redux';
 import { addItem } from '../actions/itemActions';
+import PropTypes from 'prop-types';
 
 class ItemModal extends Component {
     state = {
-        modal:false,
+        modal: false,
         name: ''
+    }
+
+    static propTypes = {
+        isAuthenticated: PropTypes.bool
     }
 
     toggle = () => {
@@ -25,10 +30,10 @@ class ItemModal extends Component {
     }
 
     onChange = (e) => {
-        this.setState({[e.target.name]:e.target.value});
+        this.setState({ [e.target.name]: e.target.value });
     }
 
-    onSubmit = (e) =>{
+    onSubmit = (e) => {
         e.preventDefault();
 
         const newItem = {
@@ -42,13 +47,14 @@ class ItemModal extends Component {
         this.toggle();
     }
     render() {
-        return(
+        return (
             <div>
-                <Button
+                {this.props.isAuthenticated ? <Button
                     color="dark"
-                    style={{marginBottom: '2rem'}}
+                    style={{ marginBottom: '2rem' }}
                     onClick={this.toggle}
-                >Add Item</Button>
+                >Add Item</Button> : <h4 className="mb-3 ml-4">Please login to manage items</h4>}
+
 
                 <Modal
                     isOpen={this.state.modal}
@@ -59,7 +65,7 @@ class ItemModal extends Component {
                         <Form onSubmit={this.onSubmit}>
                             <FormGroup>
                                 <Label for="item">Item</Label>
-                                <Input 
+                                <Input
                                     type="text"
                                     name="name"
                                     id="item"
@@ -68,7 +74,7 @@ class ItemModal extends Component {
                                 />
                                 <Button
                                     color="dark"
-                                    style={{marginTop: '2rem'}}
+                                    style={{ marginTop: '2rem' }}
                                     block
                                 >Add Item</Button>
                             </FormGroup>
@@ -81,6 +87,7 @@ class ItemModal extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    item: state.item
+    item: state.item,
+    isAuthenticated: state.auth.isAuthenticated
 });
-export default connect (mapStateToProps, { addItem })(ItemModal);
+export default connect(mapStateToProps, { addItem })(ItemModal);
