@@ -1,12 +1,8 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import {
     BrowserRouter as Router,
     Switch,
-    Route,
-    Redirect,
-    useHistory,
-    useLocation,
-    withRouter
+    Route
 } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';

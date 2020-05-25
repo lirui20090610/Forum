@@ -19,8 +19,9 @@ import MailIcon from '@material-ui/icons/Mail';
 
 
 import AuthModal from './auth/AuthModal';
-import RegisterModal from './auth/authModal/RegisterModal';
-import LoginModal from './auth/authModal/LoginModal';
+import DashboardPosts from './posts/DashboardPosts';
+import Demo from './posts/demo';
+import Demo_1 from './posts/demo1';
 
 const drawerWidth = 240;
 
@@ -100,12 +101,6 @@ class AppDrawer extends Component {
         });
     }
 
-
-
-
-
-
-
     render() {
         const { classes } = this.props;
 
@@ -183,6 +178,7 @@ class AppDrawer extends Component {
                         ))}
                     </List>
                 </Drawer>
+
                 <main
                     onClick={!this.state.isOpen ? null : this.toggle}
                     className={clsx(classes.content, {
@@ -190,13 +186,15 @@ class AppDrawer extends Component {
                     })}
                 >
                     <div className={classes.drawerHeader} />
-                    <Typography paragraph>
-                        sadasd
-            </Typography>
-                    <Typography paragraph>
-                        asdas
-            </Typography>
+
+
+                    <DashboardPosts />
+                    {/* <Demo /> */}
+
+
+
                 </main>
+
             </div>
         );
     }

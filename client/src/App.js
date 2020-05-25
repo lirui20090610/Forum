@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
-import AppNavbar from './components/AppNavbar';
 import APPDrawer from './components/APPDrawer';
-// import Bar from './components/Bar';
-import ShoppingList from './components/ShoppingList';
-import ItemModal from './components/itemModal';
 import { Container } from 'reactstrap';
 
 import { Provider } from 'react-redux';

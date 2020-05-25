@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link as RouterLink, withRouter } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
@@ -16,6 +15,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import Link from '@material-ui/core/Link';
+
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Copyright from '../../common/Copyright';
@@ -69,11 +70,10 @@ class LoginModal extends Component {
         clearErrors: PropTypes.func.isRequired
     }
     componentWillMount() {
-        {
-            this.props.history.location.pathname === '/login' ?
-                this.setState({ modal: true })
-                : null
-        }
+
+        this.props.history.location.pathname === '/login' ?
+            this.setState({ modal: true })
+            : null
 
     }
     componentDidUpdate(prevProps) {
@@ -188,13 +188,13 @@ class LoginModal extends Component {
 
                             <Grid container>
                                 <Grid item xs>
-                                    <Link to="/forgetpassword" >
+                                    <Link component={RouterLink} to="/forgetpassword" >
                                         Forgot password?
                                     </Link>
                                 </Grid>
                                 <Grid item>
-                                    <Link to="/signup" onClick={this.toggle}>
-                                        "Don't have an account? Sign Up"
+                                    <Link component={RouterLink} to="/signup" onClick={this.toggle}>
+                                        Don't have an account? Sign Up
                                     </Link>
                                 </Grid>
                             </Grid>
