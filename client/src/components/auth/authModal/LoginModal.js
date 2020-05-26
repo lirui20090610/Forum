@@ -130,7 +130,7 @@ class LoginModal extends Component {
 
         return (
 
-            <Container component="main" maxWidth="xs" >
+            <Container maxWidth="xs" >
                 <CssBaseline />
                 <Button variant="contained" color="primary" onClick={this.toggle} >
                     Login

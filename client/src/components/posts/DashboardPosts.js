@@ -28,6 +28,10 @@ const styles = theme => ({
         paddingTop: 5,
         paddingBottom: 0
     },
+    avatar: {
+        width: theme.spacing(6),
+        height: theme.spacing(6),
+    },
     media: {
         height: 0,
         paddingTop: '56.25%', // 16:9
@@ -97,7 +101,7 @@ class DashboardPosts extends Component {
                         className={classes.header}
                         avatar={
                             <IconButton  >
-                                <Avatar alt="Remy Sharp" src="/static/avatars/1.jpg" />
+                                <Avatar className={classes.avatar} alt="Remy Sharp" src="/static/avatars/1.jpg" />
                             </IconButton>
                         }
 

@@ -20,6 +20,7 @@ import MailIcon from '@material-ui/icons/Mail';
 
 import AuthModal from './auth/AuthModal';
 import DashboardPosts from './posts/DashboardPosts';
+import PostModal from './posts/PostModal';
 import Demo from './posts/demo';
 import Demo_1 from './posts/demo1';
 
@@ -187,8 +188,9 @@ class AppDrawer extends Component {
                 >
                     <div className={classes.drawerHeader} />
 
-
+                    <PostModal />
                     <DashboardPosts />
+
                     {/* <Demo /> */}
 
 

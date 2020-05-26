@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const auth = require('../../middleware/auth');
 
 //User Model
-const Item = require('../../models/User');
+const User = require('../../models/User');
 
 
 // @route Post api/auth
