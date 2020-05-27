@@ -145,7 +145,7 @@ class DashboardPosts extends Component {
                         {faces.map(face => (
                             <Avatar className={classes.bottomAvatars} key={face} src={face} />
                         ))}
-                        <Typography variant="text" color="textSecondary" component="p">+420</Typography>
+                        <Typography variant="button" color="textSecondary" component="p">+420</Typography>
 
                         <IconButton className={classes.bottomButton} size="small">
                             <FavoriteIcon />50

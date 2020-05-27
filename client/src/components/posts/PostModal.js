@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link as RouterLink, withRouter } from 'react-router-dom';
+import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -9,201 +10,175 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import Link from '@material-ui/core/Link';
 import ImageIcon from '@material-ui/icons/Image';
 import GifIcon from '@material-ui/icons/Gif';
 import VideoLabelIcon from '@material-ui/icons/VideoLabel';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import BarChartIcon from '@material-ui/icons/BarChart';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-// import Copyright from '../../common/Copyright';
-// import Errors from '../../common/Errors';
-// import { login } from '../../../actions/authActions';
-// import { clearErrors } from '../../../actions/errorActions';
+import Errors from '../common/Errors';
+
 
 
 
 
 const styles = theme => ({
+
     paper: {
-        maxWidth: "50%",
-        marginLeft: "25%",
-        marginRight: "25%",
-        // backgroundColor: theme.palette.primary.main,
+        marginTop: theme.spacing(8),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        position: 'relative',
     },
     avatarButton: {
-        margin: theme.spacing(1),
+        // margin: theme.spacing(4),
+        marginTop: theme.spacing(5),
+        padding: 0,
     },
     avatar: {
-        width: theme.spacing(8),
-        height: theme.spacing(8),
+        width: theme.spacing(12),
+        height: theme.spacing(12),
     },
-    titleInput: {
-        width: "78%",
-        marginTop: theme.spacing(2),
-        marginLeft: "2%",
+    closeButton: {
+        position: 'absolute',
+        right: theme.spacing(1),
+        top: theme.spacing(1),
+        color: theme.palette.grey[500],
     },
-    contentInput: {
-        width: "90%",
-        marginTop: theme.spacing(2),
-        marginLeft: "5%",
-        marginBottom: "5%",
+    form: {
+        width: '90%', // Fix IE 11 issue.
+        marginTop: theme.spacing(1),
     },
-    contentButton: {
-        marginLeft: "11%",
-        // margin: theme.spacing(1),
+    submit: {
+        margin: theme.spacing(3, 0, 2),
     },
-    submitButton: {
-        marginTop: "140%",
-    },
-    // gridList: {
-    //     // paddingLeft: 5,
-    //     // padding: 0,
-    //     // paddingTop: 5,
 
-    //     display: 'flex',
-    //     flexWrap: 'wrap',
-    //     justifyContent: 'space-around',
-    //     overflow: 'hidden',
-    //     backgroundColor: theme.palette.background.paper,
-
-    // }
-
+    alert: {
+        width: '100%',
+    }
 });
 
 class PostModal extends Component {
-
-    toggle = () => {
-        // Clear errors
-        // this.props.clearErrors();
-        // this.setState({
-        //     modal: !this.state.modal
-        // });
-        console.log("here");
+    state = {
+        modal: false,
+        email: '',
+        password: '',
+        msg: null
     }
 
-    onChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
-    }
+    // static propTypes = {
+    //     isAuthenticated: PropTypes.bool,
+    //     error: PropTypes.object.isRequired,
+    //     login: PropTypes.func.isRequired,
+    //     clearErrors: PropTypes.func.isRequired
+    // }
 
-    onSubmit = (e) => {
-        e.preventDefault();
-
-
-    }
 
     render() {
         const { classes } = this.props;
 
         return (
 
-            <Paper elevation={3} className={classes.paper}>
+            <Container component="main" maxWidth="xs">
+                <Paper elevation={3} >
+                    <CssBaseline />
+                    <div className={classes.paper}>
+                        <IconButton className={classes.closeButton}>
+                            <CloseIcon />
+                        </IconButton>
+                        <IconButton className={classes.avatarButton}>
+                            <Avatar className={classes.avatar} alt="Remy Sharp" src="/static/avatars/1.jpg" />
+                        </IconButton>
 
-                {/* <GridList cols={9} className={classes.gridList}>
-                    <GridListTile cols={2} rows={1}> */}
-                <IconButton size="large" className={classes.avatarButton}>
-                    <Avatar className={classes.avatar} alt="Remy Sharp" src="/static/avatars/1.jpg" />
-                </IconButton>
-                {/* </GridListTile>
+                        <form className={classes.form} noValidate>
+                            <TextField
+                                id="standard-basic"
 
-                    <GridListTile cols={7} rows={1}> */}
-                <TextField
-                    id="standard-basic"
-                    className={classes.titleInput}
-                    name="title"
-                    // variant="outlined"
-                    label="Post your thoughts"
-                    onFocus={this.toggle}
-                />
-                {/* </GridListTile>
+                                margin="normal"
+                                fullWidth
+                                label="Post your post"
+                                name="title"
+                                autoComplete="email"
+                            />
+                            <Grid container >
+                                <Grid item>
+                                    <IconButton color='secondary'>
+                                        <ImageIcon />
+                                    </IconButton>
+                                </Grid>
 
-                </GridList> */}
+                                <Grid item>
+                                    <IconButton color='secondary'>
+                                        <GifIcon />
+                                    </IconButton>
+                                </Grid>
 
-
-                {/* <GridList cols={5}>
-                    <GridListTile cols={1}> */}
-                <IconButton className={classes.contentButton} color='secondary'>
-                    <ImageIcon />
-                </IconButton>
-                {/* </GridListTile>
-
-                    <GridListTile cols={1}> */}
-                <IconButton className={classes.contentButton} color='secondary'>
-                    <GifIcon />
-                </IconButton>
-                {/* </GridListTile>
-
-                    <GridListTile cols={1}> */}
-                <IconButton className={classes.contentButton} color='secondary'>
-                    <VideoLabelIcon />
-                </IconButton>
-                {/* </GridListTile>
-
-                    <GridListTile cols={1}> */}
-                <IconButton className={classes.contentButton} color='secondary'>
-                    <EmojiEmotionsIcon />
-                </IconButton>
-                {/* </GridListTile> */}
-
-                {/* <GridListTile cols={1}> */}
-                <IconButton className={classes.contentButton} color='secondary'>
-                    <BarChartIcon />
-                </IconButton>
-                {/* </GridListTile>
-                </GridList> */}
+                                <Grid item>
+                                    <IconButton color='secondary'>
+                                        <VideoLabelIcon />
+                                    </IconButton>
+                                </Grid>
 
 
+                                <Grid item>
+                                    <IconButton color='secondary'>
+                                        <EmojiEmotionsIcon />
+                                    </IconButton>
+                                </Grid>
 
 
-
-                {/* <IconButton className={classes.contentButton} color='secondary'>
-                    <VideoLabelIcon />
-                </IconButton>
-
-                <IconButton className={classes.contentButton} color='secondary'>
-                    <EmojiEmotionsIcon />
-                </IconButton>
-
-                <IconButton className={classes.contentButton} color='secondary'>
-                    <BarChartIcon />
-                </IconButton> */}
+                                <Grid item>
+                                    <IconButton color='secondary'>
+                                        <BarChartIcon />
+                                    </IconButton>
+                                </Grid>
 
 
+                            </Grid>
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                multiline
+                                rows={4}
+                                fullWidth
+                                name="content"
+                                label="Your thoughts"
+                            />
 
-                <TextField
-                    className={classes.contentInput}
-                    multiline
-                    rows={8}
-                    name="content"
-                    variant="outlined"
-                    label="Your thoughts"
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment >
-                                <Button variant="contained" color="primary" className={classes.submitButton}>
-                                    Submit
-                                </Button>
-                            </InputAdornment>
-                        ),
-                    }}
-                >
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                className={classes.submit}
+                            >
+                                Submit
+                            </Button>
 
-                </TextField>
-            </Paper>
+                        </form>
+                    </div>
+                </Paper>
+            </Container>
+
+
         )
     };
 }
+
+const mapStateToProps = (state) => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    error: state.error
+});
+
 
 export default withStyles(styles)(PostModal);
