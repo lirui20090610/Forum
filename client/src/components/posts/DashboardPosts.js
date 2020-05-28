@@ -49,23 +49,23 @@ const styles = theme => ({
 
     bottomButton: {
         // margin: theme.spacing(1.5),
-        marginLeft: 29,
-        marginRight: 29
+        marginLeft: '10%',
     },
 
     cardActions: {
-        paddingTop: 2,
-        paddingBottom: 2,
+
+        paddingTop: '2%',
+        paddingBottom: '2%',
     },
 
     cardContent: {
         paddingTop: 0,
-        paddingBottom: 5,
+        paddingBottom: '3%',
     },
 
     bottomAvatars: {
-        width: 32,
-        height: 32,
+        width: theme.spacing(4),
+        height: theme.spacing(4),
         display: "inline-block",
         border: "2px solid white",
         "&:not(:first-of-type)": {
@@ -158,8 +158,9 @@ class DashboardPosts extends Component {
                             onClick={this.handleExpandClick}
                             aria-expanded={this.state.expanded}
                             aria-label="show more"
+                            size="small"
                         >
-                            <ExpandMoreIcon />
+                            <ModeComment />100
                         </IconButton>
                     </CardActions>
                     <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>

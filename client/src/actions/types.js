@@ -13,6 +13,10 @@ export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAIL = 'REGISTER_FAIL';
 
 
+export const POST_SUCCESS = 'POST_SUCCESS';
+export const POST_FAIL = 'POST_FAIL';
+
+
 export const GET_ERRORS = 'GET_ERRORS';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 

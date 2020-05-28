@@ -10,13 +10,15 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
+import Slide from '@material-ui/core/Slide';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import Link from '@material-ui/core/Link';
+import Fab from '@material-ui/core/Fab';
+import EditIcon from '@material-ui/icons/Edit';
 import ImageIcon from '@material-ui/icons/Image';
 import GifIcon from '@material-ui/icons/Gif';
 import VideoLabelIcon from '@material-ui/icons/VideoLabel';
@@ -26,6 +28,8 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Errors from '../common/Errors';
+import { uploadPost } from '../../actions/postActions';
+import { clearErrors } from '../../actions/errorActions';
 
 
 
@@ -34,7 +38,7 @@ import Errors from '../common/Errors';
 const styles = theme => ({
 
     paper: {
-        marginTop: theme.spacing(8),
+        // marginTop: theme.spacing(8),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -48,6 +52,9 @@ const styles = theme => ({
     avatar: {
         width: theme.spacing(12),
         height: theme.spacing(12),
+    },
+    input: {
+        display: 'none',
     },
     closeButton: {
         position: 'absolute',
@@ -65,120 +72,202 @@ const styles = theme => ({
 
     alert: {
         width: '100%',
+    },
+    dialog: {
+        width: '60%'
     }
+});
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
 });
 
 class PostModal extends Component {
     state = {
         modal: false,
-        email: '',
-        password: '',
+        title: '',
+        content: '',
         msg: null
     }
+    componentDidUpdate(prevProps) {
+        const { error, isUploaded } = this.props;
+        if (error !== prevProps.error) {
+            // Check for register error
+            if (error.id === 'POST_FAIL') {
+                this.setState({ msg: error.msg.msg });
+            } else {
+                this.setState({ msg: null });
+            }
+        }
 
-    // static propTypes = {
-    //     isAuthenticated: PropTypes.bool,
-    //     error: PropTypes.object.isRequired,
-    //     login: PropTypes.func.isRequired,
-    //     clearErrors: PropTypes.func.isRequired
-    // }
+        // If authenticated, close modal
 
+        if (isUploaded) {
+            console.log("successful!!");
+        }
+
+    }
+
+    toggle = () => {
+        // Clear errors
+        this.props.clearErrors();
+        this.setState({
+            modal: !this.state.modal
+        });
+    }
+
+    onChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+    onSubmit = (e) => {
+        e.preventDefault();
+
+        const { title, content } = this.state;
+        const userID = this.props.auth.user._id;
+
+        // Create user object
+        const newPost = {
+            title,
+            userID,
+            content
+        };
+        //Attempt to register
+        this.props.uploadPost(newPost);
+
+    }
 
     render() {
         const { classes } = this.props;
 
         return (
 
-            <Container component="main" maxWidth="xs">
-                <Paper elevation={3} >
-                    <CssBaseline />
-                    <div className={classes.paper}>
-                        <IconButton className={classes.closeButton}>
-                            <CloseIcon />
-                        </IconButton>
-                        <IconButton className={classes.avatarButton}>
-                            <Avatar className={classes.avatar} alt="Remy Sharp" src="/static/avatars/1.jpg" />
-                        </IconButton>
+            <Container maxWidth="xs">
+                <CssBaseline />
+                <Fab color="secondary" onClick={this.toggle}>
+                    <EditIcon />
+                </Fab>
 
-                        <form className={classes.form} noValidate>
-                            <TextField
-                                id="standard-basic"
+                <Dialog
+                    open={this.state.modal}
+                    fullWidth={true}
+                    TransitionComponent={Transition}
+                >
 
-                                margin="normal"
-                                fullWidth
-                                label="Post your post"
-                                name="title"
-                                autoComplete="email"
-                            />
-                            <Grid container >
-                                <Grid item>
-                                    <IconButton color='secondary'>
-                                        <ImageIcon />
-                                    </IconButton>
+                    <Paper elevation={3} >
+
+                        <div className={classes.paper}>
+
+                            <IconButton onClick={this.toggle} className={classes.closeButton}>
+                                <CloseIcon />
+                            </IconButton>
+
+                            <IconButton className={classes.avatarButton}>
+                                <Avatar className={classes.avatar} alt="Remy Sharp" src="/static/avatars/1.jpg" />
+                            </IconButton>
+                            <Errors msg={this.state.msg} />
+                            <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
+
+                                <TextField
+                                    id="standard-basic"
+                                    margin="normal"
+                                    fullWidth
+                                    label="Post your post"
+                                    name="title"
+                                />
+
+                                <Grid container >
+                                    <Grid item>
+                                        <input accept="image/*" className={classes.input} id="icon-button-image" type="file" />
+                                        <label htmlFor="icon-button-image">
+                                            <IconButton color='secondary' component="span" >
+                                                <ImageIcon />
+                                            </IconButton>
+                                        </label>
+                                    </Grid>
+
+                                    <Grid item>
+                                        <IconButton color='secondary'>
+                                            <GifIcon />
+                                        </IconButton>
+                                    </Grid>
+
+                                    <Grid item>
+                                        <input accept="video/*" className={classes.input} id="icon-button-video" type="file" />
+                                        <label htmlFor="icon-button-video">
+                                            <IconButton color='secondary' component="span">
+                                                <VideoLabelIcon />
+                                            </IconButton>
+                                        </label>
+
+                                    </Grid>
+
+
+                                    <Grid item>
+                                        <IconButton color='secondary'>
+                                            <EmojiEmotionsIcon />
+                                        </IconButton>
+                                    </Grid>
+
+
+                                    <Grid item>
+                                        <IconButton color='secondary'>
+                                            <BarChartIcon />
+                                        </IconButton>
+                                    </Grid>
+
+
                                 </Grid>
+                                <TextField
+                                    variant="outlined"
+                                    margin="normal"
+                                    multiline
+                                    rows={9}
+                                    fullWidth
+                                    name="content"
+                                    label="Your thoughts"
+                                />
 
-                                <Grid item>
-                                    <IconButton color='secondary'>
-                                        <GifIcon />
-                                    </IconButton>
-                                </Grid>
-
-                                <Grid item>
-                                    <IconButton color='secondary'>
-                                        <VideoLabelIcon />
-                                    </IconButton>
-                                </Grid>
-
-
-                                <Grid item>
-                                    <IconButton color='secondary'>
-                                        <EmojiEmotionsIcon />
-                                    </IconButton>
-                                </Grid>
-
-
-                                <Grid item>
-                                    <IconButton color='secondary'>
-                                        <BarChartIcon />
-                                    </IconButton>
-                                </Grid>
-
-
-                            </Grid>
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                multiline
-                                rows={4}
-                                fullWidth
-                                name="content"
-                                label="Your thoughts"
-                            />
-
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                className={classes.submit}
-                            >
-                                Submit
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    className={classes.submit}
+                                >
+                                    Submit
                             </Button>
 
-                        </form>
-                    </div>
-                </Paper>
-            </Container>
+
+                            </form>
+
+                        </div>
+
+
+                    </Paper>
+                </Dialog>
+
+            </Container >
 
 
         )
     };
 }
 
+PostModal.propTypes = {
+    isUploaded: PropTypes.bool,
+    auth: PropTypes.object.isRequired,
+    error: PropTypes.object.isRequired,
+    uploadPost: PropTypes.func.isRequired,
+    clearErrors: PropTypes.func.isRequired
+}
+
+// User ID in auth is essential for inserting post into DB
 const mapStateToProps = (state) => ({
-    isAuthenticated: state.auth.isAuthenticated,
+    isUploaded: state.post.isUploaded,
+    auth: state.auth,
     error: state.error
+
 });
 
-
-export default withStyles(styles)(PostModal);
+PostModal = withStyles(styles)(PostModal)
+export default connect(mapStateToProps, { uploadPost, clearErrors })(PostModal);;
