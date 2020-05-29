@@ -148,7 +148,7 @@ class RegisterModal extends Component {
                         <Typography component="h1" variant="h5">
                             Sign up
                             </Typography>
-                        <Errors msg={this.state.msg} />
+                        <Errors />
                         <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={6}>

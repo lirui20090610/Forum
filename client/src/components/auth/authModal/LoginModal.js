@@ -146,7 +146,7 @@ class LoginModal extends Component {
                         <Typography component="h1" variant="h5">
                             Sign in
                         </Typography>
-                        <Errors msg={this.state.msg} />
+                        <Errors />
                         <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
                             <TextField
                                 variant="outlined"
