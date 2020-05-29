@@ -14,9 +14,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
     appBarButton: {
-
         display: 'flex',
-
     },
 });
 class AuthModal extends Component {
