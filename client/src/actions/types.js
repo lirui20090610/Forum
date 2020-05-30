@@ -15,6 +15,10 @@ export const REGISTER_FAIL = 'REGISTER_FAIL';
 
 export const POST_SUCCESS = 'POST_SUCCESS';
 export const POST_FAIL = 'POST_FAIL';
+export const ADD_IMAGES = 'ADD_IMAGES';
+export const ADD_VIDEOS = 'ADD_VIDEOS';
+export const REMOVE_FILE = 'REMOVE_FILE';
+
 
 
 export const GET_ERRORS = 'GET_ERRORS';

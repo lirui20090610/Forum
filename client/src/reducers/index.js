@@ -9,5 +9,5 @@ export default combineReducers({
     item: itemReducer,
     error: errorReducer,
     auth: authReducer,
-    post: postReducer
+    post: postReducer,
 });

@@ -19,9 +19,6 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Fab from '@material-ui/core/Fab';
-import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
 import EditIcon from '@material-ui/icons/Edit';
 import ImageIcon from '@material-ui/icons/Image';
 import GifIcon from '@material-ui/icons/Gif';
@@ -32,10 +29,13 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Errors from '../common/Errors';
-import { uploadPost } from '../../actions/postActions';
+import FileGridList from '../common/FileGridList';
+import {
+    uploadPost,
+    addImage,
+    addVideo,
+} from '../../actions/postActions';
 import { clearErrors } from '../../actions/errorActions';
-
-
 
 
 
@@ -80,28 +80,6 @@ const styles = theme => ({
     dialog: {
         width: '60%'
     },
-    gridListRoot: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-        overflow: 'hidden',
-        backgroundColor: theme.palette.background.paper,
-    },
-    gridList: {
-        width: 500,
-        // without the following, height would grow automatically
-        // height: 450,
-        // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
-        transform: 'translateZ(0)',
-    },
-    titleBar: {
-        background:
-            'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, ' +
-            'rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
-    },
-    gridListIcon: {
-        color: 'white',
-    },
 });
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -114,24 +92,34 @@ class PostModal extends Component {
         title: '',
         content: '',
         files: [],
+        imageNum: 0,
+        videoNum: 0,
+        imageDisable: false,
+        videoDisable: false,
+        imageExceed: false,
+        videoExceed: false,
         msg: null
     }
     componentDidUpdate(prevProps) {
         const { error, isUploaded } = this.props;
         if (error !== prevProps.error) {
-            // Check for register error
-            if (error.id === 'POST_FAIL') {
-                this.setState({ msg: error.msg.msg });
-            } else {
-                this.setState({ msg: null });
+            switch (error.id) {
+                case 'POST_FAIL':
+                    break;
+                case 'IMAGE_EXCEED':
+                    break;
+                case 'VIDEO_EXCEED':
+                    break;
+                default:
+                    break;
             }
+
         }
 
         // If authenticated, close modal
         if (isUploaded) {
             console.log("successful!!");
         }
-        console.log(this.state.files);
     }
 
     toggle = () => {
@@ -141,24 +129,17 @@ class PostModal extends Component {
             modal: !this.state.modal
         });
     }
-    removeFile = (tile) => {
-        this.setState({
-            files: this.state.files.filter(file => file !== tile)
-        });
-    }
+
     onChange = (e) => {
-        // case for uploading file, adding url object to the state.file
+        // case for adding file locally, adding url object to the state.file
+        // check file numbers, call connected functions and apply corresponding UI change
         if (e.target.files) {
-            this.setState({
-                files: [...this.state.files, ...[...e.target.files].map(element =>
-                    ({
-                        type: element.type.split("/")[0],
-                        source: URL.createObjectURL(element)
-                    })
+            if (e.target.files[0].type.includes('image')) {
+                this.props.addImage(e.target.files);
+            } else if (e.target.files[0].type.includes('video')) {
+                this.props.addVideo(e.target.files);
+            }
 
-
-                )]
-            });
             //reset the event, therefore same file would still trigger the onChange
             e.target.value = '';
         }
@@ -213,7 +194,7 @@ class PostModal extends Component {
                             <IconButton className={classes.avatarButton}>
                                 <Avatar className={classes.avatar} alt="Remy Sharp" src="/static/avatars/1.jpg" />
                             </IconButton>
-                            <Errors msg={this.state.msg} />
+                            <Errors />
                             <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
 
                                 <TextField
@@ -228,7 +209,7 @@ class PostModal extends Component {
                                     <Grid item>
                                         <input accept="image/*" className={classes.input} id="icon-button-image" type="file" multiple />
                                         <label htmlFor="icon-button-image">
-                                            <IconButton color='secondary' component="span" >
+                                            <IconButton color='secondary' component="span" disabled={this.state.imageDisable}>
                                                 <ImageIcon />
                                             </IconButton>
                                         </label>
@@ -243,7 +224,7 @@ class PostModal extends Component {
                                     <Grid item>
                                         <input accept="video/*" className={classes.input} id="icon-button-video" type="file" multiple />
                                         <label htmlFor="icon-button-video">
-                                            <IconButton color='secondary' component="span">
+                                            <IconButton color='secondary' component="span" disabled={this.state.videoDisable}>
                                                 <VideoLabelIcon />
                                             </IconButton>
                                         </label>
@@ -277,63 +258,7 @@ class PostModal extends Component {
                                 >
                                 </TextField>
 
-                                <div className={classes.gridLisrRoot}>
-                                    <GridList cellHeight={200} spacing={1} className={classes.gridList}>
-                                        {this.state.files.map((tile) => {
-                                            let fileComponent, columns, rows;
-                                            switch (tile.type) {
-                                                case "image":
-                                                    columns = 1;
-                                                    rows = 1;
-                                                    fileComponent = <img src={tile.source} alt='' />
-                                                    break;
-
-                                                case "video":
-                                                    columns = 2;
-                                                    rows = 2;
-                                                    fileComponent =
-                                                        <video width="500" controls>
-                                                            <source src={tile.source} />
-                                                        </video>
-                                                    break;
-
-                                            }
-                                            return (
-                                                <GridListTile key={tile.source} cols={columns} rows={rows}>
-                                                    {fileComponent}
-                                                    <GridListTileBar
-                                                        titlePosition="top"
-                                                        actionIcon={
-                                                            <IconButton onClick={this.removeFile.bind(this, tile)} className={classes.gridListIcon} >
-                                                                <CloseIcon />
-                                                            </IconButton>
-                                                        }
-                                                        actionPosition="right"
-                                                        className={classes.titleBar}
-                                                    />
-                                                </GridListTile>
-                                            );
-
-
-                                            // (
-                                            //     <GridListTile key={tile} cols={1} rows={1}>
-                                            //         <img src={tile} alt='' />
-                                            //         <GridListTileBar
-                                            //             titlePosition="top"
-                                            //             actionIcon={
-                                            //                 <IconButton onClick={this.removeFile.bind(this, tile)} className={classes.gridListIcon} >
-                                            //                     <CloseIcon />
-                                            //                 </IconButton>
-                                            //             }
-                                            //             actionPosition="right"
-                                            //             className={classes.titleBar}
-                                            //         />
-                                            //     </GridListTile>
-                                            // )
-
-                                        })}
-                                    </GridList>
-                                </div>
+                                <FileGridList />
 
                                 <Button
                                     type="submit"
@@ -362,7 +287,7 @@ class PostModal extends Component {
 }
 
 PostModal.propTypes = {
-    isUploaded: PropTypes.bool,
+    post: PropTypes.object.isRequired,
     auth: PropTypes.object.isRequired,
     error: PropTypes.object.isRequired,
     uploadPost: PropTypes.func.isRequired,
@@ -371,11 +296,11 @@ PostModal.propTypes = {
 
 // User ID in auth is essential for inserting post into DB
 const mapStateToProps = (state) => ({
-    isUploaded: state.post.isUploaded,
+    post: state.post,
     auth: state.auth,
     error: state.error
 
 });
 
 PostModal = withStyles(styles)(PostModal);
-export default connect(mapStateToProps, { uploadPost, clearErrors })(PostModal);
+export default connect(mapStateToProps, { uploadPost, addImage, addVideo, clearErrors })(PostModal);
