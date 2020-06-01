@@ -5,16 +5,16 @@ import Box from '@material-ui/core/Box';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-class Errors extends Component {
+export default class Errors extends Component {
     render() {
         let errors;
 
-        this.props.msg.msg ?
+        this.props.msg ?
             errors =
             <Box width="75%">
                 <Alert severity="error" >
                     <AlertTitle>Error</AlertTitle>
-                    <strong>{this.props.msg.msg}</strong>
+                    <strong>{this.props.msg}</strong>
                 </Alert >
             </Box>
             :
@@ -28,12 +28,13 @@ class Errors extends Component {
 }
 
 Errors.propTypes = {
-    msg: PropTypes.object.isRequired,
+    msg: PropTypes.string,
 }
 
-const mapStateToProps = (state) => ({
-    msg: state.error.msg
-});
+// const mapStateToProps = (state) => ({
+//     msg: state.error.msg
+// });
 
-export default connect(mapStateToProps, null)(Errors);
+// export default connect(mapStateToProps, null)(Errors);
+
 

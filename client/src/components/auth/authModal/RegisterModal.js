@@ -76,20 +76,13 @@ class RegisterModal extends Component {
 
     }
     componentDidUpdate(prevProps) {
-        const { error, isAuthenticated } = this.props;
+        const { error } = this.props;
         if (error !== prevProps.error) {
             // Check for register error
             if (error.id === 'REGISTER_FAIL') {
-                //do something here
-            }
-        }
-
-        // If authenticated, close modal
-        if (this.state.modal) {
-            if (isAuthenticated) {
-                this.toggle();
-                // redirect to 'logedin'
-                this.props.history.push('/logedin');
+                this.setState({ msg: error.msg.msg })
+            } else {
+                this.setState({ msg: null })
             }
         }
     }
@@ -120,6 +113,7 @@ class RegisterModal extends Component {
         };
         //Attempt to register
         this.props.register(newUser);
+        this.props.history.push('/');
 
     }
 
@@ -133,8 +127,7 @@ class RegisterModal extends Component {
                 <Button variant="contained" color="primary" onClick={this.toggle} >
                     Register
                 </Button>
-                <Dialog open={this.state.modal}
-                >
+                <Dialog open={this.state.modal}>
 
                     <IconButton onClick={this.toggle} className={classes.CloseButton}>
                         <CloseIcon />
@@ -146,7 +139,7 @@ class RegisterModal extends Component {
                         <Typography component="h1" variant="h5">
                             Sign up
                             </Typography>
-                        <Errors />
+                        <Errors msg={this.state.msg} />
                         <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={6}>
@@ -237,14 +230,14 @@ class RegisterModal extends Component {
 RegisterModal.propTypes = {
     // classes: PropTypes.object.isRequired,
     isAuthenticated: PropTypes.bool,
-    error: PropTypes.object.isRequired,
+    // error: PropTypes.object.isRequired,
     register: PropTypes.func.isRequired,
     clearErrors: PropTypes.func.isRequired
 }
 
 
 const mapStateToProps = (state) => ({
-    isAuthenticated: state.auth.isAuthenticated,
+    // isAuthenticated: state.auth.isAuthenticated,
     error: state.error
 });
 

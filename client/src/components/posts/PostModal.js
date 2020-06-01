@@ -32,8 +32,9 @@ import Errors from '../common/Errors';
 import FileGridList from '../common/FileGridList';
 import {
     uploadPost,
-    addImage,
-    addVideo,
+    addFiles,
+    validateFile,
+    getSourceID,
 } from '../../actions/postActions';
 import { clearErrors } from '../../actions/errorActions';
 
@@ -91,35 +92,32 @@ class PostModal extends Component {
         modal: false,
         title: '',
         content: '',
-        files: [],
-        imageNum: 0,
-        videoNum: 0,
-        imageDisable: false,
-        videoDisable: false,
-        imageExceed: false,
-        videoExceed: false,
         msg: null
     }
     componentDidUpdate(prevProps) {
-        const { error, isUploaded } = this.props;
+        const { error } = this.props;
+        const { sourceID, needValidate } = this.props.post;
         if (error !== prevProps.error) {
-            switch (error.id) {
-                case 'POST_FAIL':
-                    break;
-                case 'IMAGE_EXCEED':
-                    break;
-                case 'VIDEO_EXCEED':
-                    break;
-                default:
-                    break;
+            // Check for register error
+            if (error.id === 'POST_FAIL') {
+                this.setState({ msg: error.msg.msg })
+            } else {
+                this.setState({ msg: null })
             }
-
         }
 
+        // console.log(this.props.post.sourceID === null, this.props.post.files.length != 0);
+        if (this.props.post.sourceID === null && this.props.post.files.length !== 0) {
+            this.props.getSourceID();
+        }
+        // console.log(this.props.post.sourceID);
+        if (this.props.post.sourceID && needValidate) {
+            this.props.validateFile();
+        }
         // If authenticated, close modal
-        if (isUploaded) {
-            console.log("successful!!");
-        }
+        // if (isUploaded) {
+        //     console.log("successful!!");
+        // }
     }
 
     toggle = () => {
@@ -134,12 +132,7 @@ class PostModal extends Component {
         // case for adding file locally, adding url object to the state.file
         // check file numbers, call connected functions and apply corresponding UI change
         if (e.target.files) {
-            if (e.target.files[0].type.includes('image')) {
-                this.props.addImage(e.target.files);
-            } else if (e.target.files[0].type.includes('video')) {
-                this.props.addVideo(e.target.files);
-            }
-
+            this.props.addFiles(e.target.files);
             //reset the event, therefore same file would still trigger the onChange
             e.target.value = '';
         }
@@ -153,7 +146,7 @@ class PostModal extends Component {
         e.preventDefault();
 
         const { title, content } = this.state;
-        const userID = this.props.auth.user._id;
+        const userID = this.props.user._id;
 
         // Create user object
         const newPost = {
@@ -194,7 +187,7 @@ class PostModal extends Component {
                             <IconButton className={classes.avatarButton}>
                                 <Avatar className={classes.avatar} alt="Remy Sharp" src="/static/avatars/1.jpg" />
                             </IconButton>
-                            <Errors />
+                            <Errors msg={this.state.msg} />
                             <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
 
                                 <TextField
@@ -207,9 +200,9 @@ class PostModal extends Component {
 
                                 <Grid container >
                                     <Grid item>
-                                        <input accept="image/*" className={classes.input} id="icon-button-image" type="file" multiple />
+                                        <input accept="image/*" className={classes.input} id="icon-button-image" type="file" multiple disabled={this.props.post.imageFull} />
                                         <label htmlFor="icon-button-image">
-                                            <IconButton color='secondary' component="span" disabled={this.state.imageDisable}>
+                                            <IconButton color='secondary' component="span" disabled={this.props.post.imageFull}>
                                                 <ImageIcon />
                                             </IconButton>
                                         </label>
@@ -222,9 +215,9 @@ class PostModal extends Component {
                                     </Grid>
 
                                     <Grid item>
-                                        <input accept="video/*" className={classes.input} id="icon-button-video" type="file" multiple />
+                                        <input accept="video/*" className={classes.input} id="icon-button-video" type="file" multiple disabled={this.props.post.videoFull} />
                                         <label htmlFor="icon-button-video">
-                                            <IconButton color='secondary' component="span" disabled={this.state.videoDisable}>
+                                            <IconButton color='secondary' component="span" disabled={this.props.post.videoFull}>
                                                 <VideoLabelIcon />
                                             </IconButton>
                                         </label>
@@ -288,19 +281,21 @@ class PostModal extends Component {
 
 PostModal.propTypes = {
     post: PropTypes.object.isRequired,
-    auth: PropTypes.object.isRequired,
-    error: PropTypes.object.isRequired,
+    user: PropTypes.object,
+    error: PropTypes.object,
     uploadPost: PropTypes.func.isRequired,
+    addFiles: PropTypes.func.isRequired,
+    validateFile: PropTypes.func.isRequired,
+    getSourceID: PropTypes.func.isRequired,
     clearErrors: PropTypes.func.isRequired
 }
 
 // User ID in auth is essential for inserting post into DB
 const mapStateToProps = (state) => ({
     post: state.post,
-    auth: state.auth,
+    user: state.auth.user,
     error: state.error
-
 });
 
 PostModal = withStyles(styles)(PostModal);
-export default connect(mapStateToProps, { uploadPost, addImage, addVideo, clearErrors })(PostModal);
+export default connect(mapStateToProps, { uploadPost, addFiles, validateFile, getSourceID, clearErrors })(PostModal);

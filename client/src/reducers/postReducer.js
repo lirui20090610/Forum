@@ -1,14 +1,13 @@
 import {
     POST_SUCCESS,
     POST_FAIL,
-    ADD_IMAGES,
-    ADD_VIDEOS,
+    ADD_FILES,
     REMOVE_FILE,
+    GOT_SOURCEID
 } from '../actions/types';
 
 
-export const imageLimit = 10;
-export const videoLimit = 2;
+
 const initialState = {
     token: localStorage.getItem('token'),
     isPosted: null,
@@ -18,6 +17,9 @@ const initialState = {
     videoNum: 0,
     imageFull: false,
     videoFull: false,
+    sourceID: null,
+    needValidate: false,
+    validCount: 0,
 }
 
 export default function (state = initialState, action) {
@@ -37,71 +39,38 @@ export default function (state = initialState, action) {
                 userPost: null
             }
 
-        case ADD_IMAGES:
-            if (state.imageNum + action.payload.currentImages === imageLimit) {
-                return {
-                    ...state,
-                    imageNum: state.imageNum + action.payload.currentImages,
-                    files: [...state.files, ...action.payload.images],
-                    imageFull: true
-                }
-            }
-            return {
-                ...state,
-                imageNum: state.imageNum + action.payload.currentImages,
-                files: [...state.files, ...action.payload.images]
-            }
-
-
-
-        case ADD_VIDEOS:
-            if (state.videoNum + action.payload.currentVideos === videoLimit) {
-                return {
-                    ...state,
-                    videoNum: state.videoNum + action.payload.currentVideos,
-                    files: [...state.files, ...action.payload.videos],
-                    videoFull: true
-                }
-            }
-            return {
-                ...state,
-                videoNum: state.videoNum + action.payload.currentVideos,
-                files: [...state.files, ...action.payload.videos]
-            }
-
-        case REMOVE_FILE:
+        case GOT_SOURCEID:
             console.log(action.payload);
-            if (action.payload.file.type.includes('image')) {
-                if (state.imageFull) {
-                    return {
-                        ...state,
-                        files: state.files.filter(file => file !== action.payload.file),
-                        imageNum: state.imageNum - 1,
-                        imageFull: false
-                    }
-                }
-                return {
-                    ...state,
-                    files: state.files.filter(file => file !== action.payload.file),
-                    imageNum: state.imageNum - 1,
-                }
-            } else if (action.payload.file.type.includes('video')) {
-                if (state.videoFull) {
-                    return {
-                        ...state,
-                        files: state.files.filter(file => file !== action.payload.file),
-                        videoNum: state.videoNum - 1,
-                        videoFull: false
-                    }
-                }
-                return {
-                    ...state,
-                    files: state.files.filter(file => file !== action.payload.file),
-                    videoNum: state.videoNum - 1,
-                }
+            return {
+                ...state,
+                sourceID: action.payload
             }
 
-        default:
-            return state;
+
+        case ADD_FILES:
+            console.log(action.payload);
+            return {
+                ...state,
+                imageNum: action.payload.imageNum,
+                videoNum: action.payload.videoNum,
+                files: action.payload.files,
+                imageFull: action.payload.imageFull,
+                videoFull: action.payload.videoFull,
+                needValidate: action.payload.needValidate,
+            }
+        case REMOVE_FILE:
+            // console.log(action.payload);
+            return {
+                ...state,
+                imageNum: action.payload.imageNum,
+                videoNum: action.payload.videoNum,
+                files: action.payload.files,
+                imageFull: action.payload.imageFull,
+                videoFull: action.payload.videoFull
+            }
+
+
+        default: // need this for default case
+            return state
     }
 }

@@ -17,21 +17,35 @@ const styles = theme => ({
         display: 'flex',
     },
 });
+let manageLogin;
+
 class AuthModal extends Component {
 
     static propTypes = {
         auth: PropTypes.object.isRequired
     }
-
+    componentDidUpdate(prevProps) {
+    }
     render() {
         const { classes } = this.props;
         const { user } = this.props.auth;
-        const manageLogin = (
-            <div className={classes.appBarButton}>
-                <RegisterModal />
-                <LoginModal />
-            </div>
-        );
+        if (user) {
+            manageLogin = (
+                <div className={classes.appBarButton} >
+                    <span className="navbar-text mr-3">
+                        <strong>{user ? `Hello ${user.firstName}` : ''}</strong>
+                    </span>
+                    <Logout />
+                </div>
+            );
+        } else {
+            manageLogin = (
+                <div className={classes.appBarButton}>
+                    <RegisterModal />
+                    <LoginModal />
+                </div>
+            );
+        }
 
         return (
             <div>
@@ -47,16 +61,6 @@ class AuthModal extends Component {
 
                         <Route path='/signup' exact key='signup'>
                             {manageLogin}
-                        </Route>
-
-                        <Route path='/logedin' exact>
-                            <div className={classes.appBarButton} >
-
-                                <span className="navbar-text mr-3">
-                                    <strong>{user ? `Hello ${user.firstName}` : ''}</strong>
-                                </span>
-                                <Logout />
-                            </div>
                         </Route>
 
                         <Route path='/forgetpassword' exact>

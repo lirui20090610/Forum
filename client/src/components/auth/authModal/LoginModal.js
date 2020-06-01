@@ -63,37 +63,25 @@ class LoginModal extends Component {
         msg: null
     }
 
-    static propTypes = {
-        isAuthenticated: PropTypes.bool,
-        error: PropTypes.object.isRequired,
-        login: PropTypes.func.isRequired,
-        clearErrors: PropTypes.func.isRequired
-    }
-    componentWillMount() {
 
+    componentWillMount() {
         this.props.history.location.pathname === '/login' ?
             this.setState({ modal: true })
             : null
-
     }
     componentDidUpdate(prevProps) {
-        const { error, isAuthenticated } = this.props;
+
+        const { error } = this.props;
         if (error !== prevProps.error) {
             // Check for register error
             if (error.id === 'LOGIN_FAIL') {
-                //do something here
+                this.setState({ msg: error.msg.msg })
+            } else {
+                this.setState({ msg: null })
             }
         }
 
-        // If authenticated, close modal
-        if (this.state.modal) {
-            if (isAuthenticated) {
-                this.toggle();
 
-                // redirect to 'logedin'
-                this.props.history.push('/logedin');
-            }
-        }
     }
 
     toggle = () => {
@@ -120,12 +108,15 @@ class LoginModal extends Component {
 
         // Attempt to login
         this.props.login(user);
+        this.props.history.push('/');
+
+
+
 
     }
 
     render() {
         const { classes } = this.props;
-
         return (
 
             <Container maxWidth="xs" >
@@ -144,7 +135,7 @@ class LoginModal extends Component {
                         <Typography component="h1" variant="h5">
                             Sign in
                         </Typography>
-                        <Errors />
+                        <Errors msg={this.state.msg} />
                         <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
                             <TextField
                                 variant="outlined"
@@ -207,11 +198,16 @@ class LoginModal extends Component {
     };
 }
 
+LoginModal.propTypes = {
+    error: PropTypes.object.isRequired,
+    login: PropTypes.func.isRequired,
+    clearErrors: PropTypes.func.isRequired
+}
+
 const mapStateToProps = (state) => ({
-    isAuthenticated: state.auth.isAuthenticated,
     error: state.error
 });
 
 LoginModal = withRouter(LoginModal);
 LoginModal = (withStyles(styles)(LoginModal));
-export default connect(mapStateToProps, { login, clearErrors })(LoginModal);
+export default connect((mapStateToProps), { login, clearErrors })(LoginModal);

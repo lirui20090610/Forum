@@ -5,6 +5,9 @@ import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Typography from '@material-ui/core/Typography';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -59,7 +62,9 @@ class FileGridList extends Component {
                             case "image":
                                 columns = 1;
                                 rows = 1;
-                                fileComponent = <img src={tile.source} alt='' />
+                                fileComponent = <img src={tile.source} alt='' />;
+
+
                                 break;
 
                             case "video":
@@ -78,9 +83,13 @@ class FileGridList extends Component {
                         return (
                             <GridListTile key={tile.source} cols={columns} rows={rows}>
                                 {fileComponent}
+                                <CircularProgress variant="static" value={25} />
                                 <GridListTileBar
+                                    // title={<CircularProgress variant="static" value={25} />}
+                                    title={<LinearProgress variant="determinate" value={25} />}
                                     titlePosition="top"
                                     actionIcon={
+
                                         <IconButton onClick={this.deleteFile.bind(this, tile)} className={classes.icon} >
                                             <CloseIcon />
                                         </IconButton>

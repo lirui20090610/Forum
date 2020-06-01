@@ -1,4 +1,5 @@
 const express = require('express');
+const { uuid } = require('uuidv4');
 const router = express.Router();
 const auth = require('../../middleware/auth');
 
@@ -6,7 +7,7 @@ const auth = require('../../middleware/auth');
 const Post = require('../../models/Post');
 
 
-// @route Post api/posts
+// @route Post api/post
 // @desc user post
 // @access Public
 router.post('/', auth, (req, res) => {
@@ -28,6 +29,13 @@ router.post('/', auth, (req, res) => {
 
 });
 
+// @route post api/post/sourceID
+// @desc post an UUID for post sources
+// @access Public
+router.get('/sourceid', auth, (req, res) => {
+    // setTimeout(function () { res.json(uuid()); }, 10000);
+    res.json(uuid());
 
+});
 
 module.exports = router;
