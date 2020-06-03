@@ -56,7 +56,6 @@ export default function (state = initialState, action) {
                 files: action.payload.files,
                 imageFull: action.payload.imageFull,
                 videoFull: action.payload.videoFull,
-                needValidate: action.payload.needValidate,
             }
         case REMOVE_FILE:
             // console.log(action.payload);

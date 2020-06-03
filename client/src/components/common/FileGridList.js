@@ -83,10 +83,10 @@ class FileGridList extends Component {
                         return (
                             <GridListTile key={tile.source} cols={columns} rows={rows}>
                                 {fileComponent}
-                                <CircularProgress variant="static" value={25} />
+                                {/* <CircularProgress variant="static" value={tile.pr0gress} /> */}
                                 <GridListTileBar
                                     // title={<CircularProgress variant="static" value={25} />}
-                                    title={<LinearProgress variant="determinate" value={25} />}
+                                    title={<LinearProgress variant="determinate" value={tile.progress} />}
                                     titlePosition="top"
                                     actionIcon={
 

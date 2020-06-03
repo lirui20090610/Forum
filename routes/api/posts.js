@@ -38,4 +38,15 @@ router.get('/sourceid', auth, (req, res) => {
 
 });
 
+
+// @route Post api/post/upload
+// @desc user upload files
+// @access Public
+router.post('/upload', auth, (req, res) => {
+    console.log("user uploads");
+    res.json({ msg: 'got it' });
+});
+
+
+
 module.exports = router;

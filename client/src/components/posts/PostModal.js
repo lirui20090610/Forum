@@ -111,9 +111,9 @@ class PostModal extends Component {
             this.props.getSourceID();
         }
         // console.log(this.props.post.sourceID);
-        if (this.props.post.sourceID && needValidate) {
-            this.props.validateFile();
-        }
+        // if (this.props.post.sourceID && needValidate) {
+        //     this.props.validateFile();
+        // }
         // If authenticated, close modal
         // if (isUploaded) {
         //     console.log("successful!!");
@@ -121,11 +121,18 @@ class PostModal extends Component {
     }
 
     toggle = () => {
-        // Clear errors
-        this.props.clearErrors();
-        this.setState({
-            modal: !this.state.modal
-        });
+        // unauthorized user is not allowed to post
+        if (this.state.modal === false && this.props.auth.isAuthenticated === false) {
+
+            console.log("unauthorized");
+        } else {
+            // Clear errors
+            this.props.clearErrors();
+            this.setState({
+                modal: !this.state.modal
+            });
+        }
+
     }
 
     onChange = (e) => {
@@ -133,6 +140,9 @@ class PostModal extends Component {
         // check file numbers, call connected functions and apply corresponding UI change
         if (e.target.files) {
             this.props.addFiles(e.target.files);
+            // console.log(URL.createObjectURL(e.target.files[0]));
+            // console.log(e.target.files[0]);
+
             //reset the event, therefore same file would still trigger the onChange
             e.target.value = '';
         }
@@ -146,7 +156,7 @@ class PostModal extends Component {
         e.preventDefault();
 
         const { title, content } = this.state;
-        const userID = this.props.user._id;
+        const userID = this.props.auth.user._id;
 
         // Create user object
         const newPost = {
@@ -281,7 +291,7 @@ class PostModal extends Component {
 
 PostModal.propTypes = {
     post: PropTypes.object.isRequired,
-    user: PropTypes.object,
+    auth: PropTypes.object.isRequired,
     error: PropTypes.object,
     uploadPost: PropTypes.func.isRequired,
     addFiles: PropTypes.func.isRequired,
@@ -293,7 +303,7 @@ PostModal.propTypes = {
 // User ID in auth is essential for inserting post into DB
 const mapStateToProps = (state) => ({
     post: state.post,
-    user: state.auth.user,
+    auth: state.auth,
     error: state.error
 });
 
