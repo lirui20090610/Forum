@@ -6,6 +6,7 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Box from '@material-ui/core/Box';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 
@@ -71,8 +72,9 @@ class FileGridList extends Component {
                                 columns = 2;
                                 rows = 2;
                                 fileComponent =
-                                    <video width="500" controls>
-                                        <source src={tile.source} />
+                                    // <video width="2000" controls>
+                                    <video controls>
+                                        <source src={tile.source} type="video/mp4" />
                                     </video>
                                 break;
 
@@ -87,6 +89,14 @@ class FileGridList extends Component {
                                 <GridListTileBar
                                     // title={<CircularProgress variant="static" value={25} />}
                                     title={<LinearProgress variant="determinate" value={tile.progress} />}
+                                    // title={<Box display="flex" alignItems="center">
+                                    //     <Box width="100%" mr={1}>
+                                    //         <LinearProgress variant="determinate" value={tile.progress} />
+                                    //     </Box>
+                                    //     <Box minWidth={20}>
+                                    //         <Typography variant="body2" color="textSecondary">{`${tile.progress}%`}</Typography>
+                                    //     </Box>
+                                    // </Box>}
                                     titlePosition="top"
                                     actionIcon={
 

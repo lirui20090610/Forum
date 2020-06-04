@@ -3,7 +3,8 @@ import {
     POST_FAIL,
     ADD_FILES,
     REMOVE_FILE,
-    GOT_SOURCEID
+    GOT_SOURCEID,
+    UPDATE_PROGRESS
 } from '../actions/types';
 
 
@@ -18,8 +19,6 @@ const initialState = {
     imageFull: false,
     videoFull: false,
     sourceID: null,
-    needValidate: false,
-    validCount: 0,
 }
 
 export default function (state = initialState, action) {
@@ -40,7 +39,7 @@ export default function (state = initialState, action) {
             }
 
         case GOT_SOURCEID:
-            console.log(action.payload);
+            // console.log(action.payload);
             return {
                 ...state,
                 sourceID: action.payload
@@ -48,7 +47,7 @@ export default function (state = initialState, action) {
 
 
         case ADD_FILES:
-            console.log(action.payload);
+            // console.log(action.payload);
             return {
                 ...state,
                 imageNum: action.payload.imageNum,
@@ -68,7 +67,12 @@ export default function (state = initialState, action) {
                 videoFull: action.payload.videoFull
             }
 
-
+        case UPDATE_PROGRESS:
+            // console.log(action.payload);
+            return {
+                ...state,
+                files: action.payload.files,
+            }
         default: // need this for default case
             return state
     }

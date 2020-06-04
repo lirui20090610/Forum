@@ -17,6 +17,7 @@ export const POST_FAIL = 'POST_FAIL';
 export const GOT_SOURCEID = 'GOT_SOURCEID';
 export const ADD_FILES = 'ADD_FILES';
 export const REMOVE_FILE = 'REMOVE_FILE';
+export const UPDATE_PROGRESS = 'UPDATE_PROGRESS';
 
 
 

@@ -96,7 +96,7 @@ class PostModal extends Component {
     }
     componentDidUpdate(prevProps) {
         const { error } = this.props;
-        const { sourceID, needValidate } = this.props.post;
+        const { sourceID } = this.props.post;
         if (error !== prevProps.error) {
             // Check for register error
             if (error.id === 'POST_FAIL') {
@@ -107,9 +107,9 @@ class PostModal extends Component {
         }
 
         // console.log(this.props.post.sourceID === null, this.props.post.files.length != 0);
-        if (this.props.post.sourceID === null && this.props.post.files.length !== 0) {
-            this.props.getSourceID();
-        }
+        // if (this.props.post.sourceID === null && this.props.post.files.length !== 0) {
+        //     this.props.getSourceID();
+        // }
         // console.log(this.props.post.sourceID);
         // if (this.props.post.sourceID && needValidate) {
         //     this.props.validateFile();
@@ -136,9 +136,14 @@ class PostModal extends Component {
     }
 
     onChange = (e) => {
+
+
         // case for adding file locally, adding url object to the state.file
         // check file numbers, call connected functions and apply corresponding UI change
         if (e.target.files) {
+            if (this.props.post.sourceID === null) {
+                this.props.getSourceID();
+            }
             this.props.addFiles(e.target.files);
             // console.log(URL.createObjectURL(e.target.files[0]));
             // console.log(e.target.files[0]);

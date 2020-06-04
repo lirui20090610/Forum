@@ -1,5 +1,7 @@
 const express = require('express');
+const path = require("path");
 const { uuid } = require('uuidv4');
+const multer = require("multer");
 const router = express.Router();
 const auth = require('../../middleware/auth');
 
@@ -39,14 +41,35 @@ router.get('/sourceid', auth, (req, res) => {
 });
 
 
+
+
+const storage = multer.diskStorage({
+    destination: "./static/posts",
+    filename: function (req, file, callback) {
+        // callback(null, "IMAGE-" + path.extname(file.originalname));
+        callback(null, "IMAGE-" + file.originalname);
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1024000000 },//1GB
+}).single("postSRC");
+
+
 // @route Post api/post/upload
 // @desc user upload files
 // @access Public
-router.post('/upload', auth, (req, res) => {
-    console.log("user uploads");
+// router.post('/upload', auth, (req, res) => {
+//     // console.log(req);
+//     res.json({ msg: 'got it' });
+// });
+
+router.post('/upload', auth, upload, (req, res) => {
+    console.log("Request ---", req.body);
+    console.log("Request file ---", req.file);
     res.json({ msg: 'got it' });
 });
-
 
 
 module.exports = router;
