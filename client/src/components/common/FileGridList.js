@@ -73,9 +73,12 @@ class FileGridList extends Component {
                                 rows = 2;
                                 fileComponent =
                                     // <video width="2000" controls>
-                                    <video controls>
-                                        <source src={tile.source} type="video/mp4" />
+                                    <video controls >
+                                        <source src={tile.source} />
                                     </video>
+                                // <video controls>
+                                //     <source src={vd} />
+                                // </video>
                                 break;
 
                             default:

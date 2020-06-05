@@ -203,7 +203,7 @@ class PostModal extends Component {
                                 <Avatar className={classes.avatar} alt="Remy Sharp" src="/static/avatars/1.jpg" />
                             </IconButton>
                             <Errors msg={this.state.msg} />
-                            <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
+                            <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange} encType="multipart/form-data">
 
                                 <TextField
                                     id="standard-basic"

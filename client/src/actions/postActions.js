@@ -13,10 +13,10 @@ import { returnErrors } from './errorActions';
 const imageLimit = 10;
 const videoLimit = 2;
 
-const videoSize = 1024000000; // 1GB
+const videoSize = 10240000000; // 10GB
 // image size restrictions
-const imageWidth = 1000;
-const imageHeight = 1000;
+const imageWidth = 300;
+const imageHeight = 300;
 const imageQuality = 1;
 
 
@@ -203,7 +203,9 @@ export const uploadImage = (image, dispatch, getState) => {
             });
 
             // filename format: sourceID_fileindex
+            // console.log(file.source);
             data.append('postSRC', blob, getState().post.sourceID + '_' + getState().post.files.length);
+            // console.log(data);
             axios.post('/api/post/upload', data, config)
                 .then(res => {
                     console.log(res);
@@ -223,10 +225,15 @@ export const uploadVideo = (video, dispatch, getState) => {
         return;
     }
 
-    console.log(video);
+    // var reader = new FileReader();
+    // reader.readAsDataURL(video);
+    // reader.onload = e => {
+    //     video.src = e.target.result;
+    // console.log(e.target.result);
     let file = {
         type: video.type.split("/")[0],
         progress: 0,
+        // source: URL.createObjectURL(video),
         source: URL.createObjectURL(video),
     };
 
@@ -240,7 +247,7 @@ export const uploadVideo = (video, dispatch, getState) => {
             videoFull: getState().post.videoNum++ === videoLimit,
         }
     });
-    let data = new FormData();
+
     const config = {
         onUploadProgress: function (progressEvent) {
             var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -261,7 +268,10 @@ export const uploadVideo = (video, dispatch, getState) => {
         },
     };
 
-    data.append('postSRC', file, getState().post.sourceID + '_' + getState().post.files.length);
+    // console.log(file.source);
+    let data = new FormData();
+    data.append('postSRC', video);
+
     axios.post('/api/post/upload', data, config)
         .then(res => {
             console.log(res);
