@@ -83,6 +83,9 @@ export const addFiles = files => (dispatch, getState) => {
     let imageNum = getState().post.imageNum;
     let videoNum = getState().post.videoNum;
 
+    if (getState().post.sourceID === null) {
+        dispatch(getSourceID());
+    }
 
     if (files[0].type.includes('image')) {
         if (imageNum + fileLength > imageLimit) {
@@ -165,25 +168,7 @@ export const uploadImage = (image, dispatch, getState) => {
 
         let data = new FormData();
         let file;
-        const config = {
-            onUploadProgress: function (progressEvent) {
-                var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-                console.log(percentCompleted);
-                file.progress = percentCompleted;
-                console.log(file);
-                dispatch({
-                    type: UPDATE_PROGRESS,
-                    payload: {
-                        files: Object.assign(getState().post.files, getState().post.files.map(el => el.source === file.source ? file : el))
-                    }
-                });
 
-            },
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'x-auth-token': getState().auth.token,
-            },
-        };
 
         canvas.toBlob((blob) => {
             file = {
@@ -203,10 +188,10 @@ export const uploadImage = (image, dispatch, getState) => {
             });
 
             // filename format: sourceID_fileindex
-            // console.log(file.source);
+            console.log(getState().post.sourceID);
             data.append('postSRC', blob, getState().post.sourceID + '_' + getState().post.files.length);
             // console.log(data);
-            axios.post('/api/post/upload', data, config)
+            axios.post('/api/post/upload', data, fileConfig(file, dispatch, getState))
                 .then(res => {
                     console.log(res);
                 });
@@ -225,15 +210,10 @@ export const uploadVideo = (video, dispatch, getState) => {
         return;
     }
 
-    // var reader = new FileReader();
-    // reader.readAsDataURL(video);
-    // reader.onload = e => {
-    //     video.src = e.target.result;
-    // console.log(e.target.result);
+
     let file = {
         type: video.type.split("/")[0],
         progress: 0,
-        // source: URL.createObjectURL(video),
         source: URL.createObjectURL(video),
     };
 
@@ -248,12 +228,26 @@ export const uploadVideo = (video, dispatch, getState) => {
         }
     });
 
-    const config = {
+
+
+    let data = new FormData();
+    console.log(getState().post.sourceID);
+    data.append('postSRC', video, getState().post.sourceID + '_' + getState().post.files.length);
+
+    axios.post('/api/post/upload', data, fileConfig(file, dispatch, getState))
+        .then(res => {
+            console.log(res);
+        });
+
+
+}
+
+export const fileConfig = (file, dispatch, getState) => {
+    let config;
+    return config = {
         onUploadProgress: function (progressEvent) {
             var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-            console.log(percentCompleted);
             file.progress = percentCompleted;
-            console.log(file);
             dispatch({
                 type: UPDATE_PROGRESS,
                 payload: {
@@ -267,15 +261,4 @@ export const uploadVideo = (video, dispatch, getState) => {
             'x-auth-token': getState().auth.token,
         },
     };
-
-    // console.log(file.source);
-    let data = new FormData();
-    data.append('postSRC', video);
-
-    axios.post('/api/post/upload', data, config)
-        .then(res => {
-            console.log(res);
-        });
-
-
 }

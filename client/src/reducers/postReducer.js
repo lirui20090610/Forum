@@ -39,7 +39,7 @@ export default function (state = initialState, action) {
             }
 
         case GOT_SOURCEID:
-            // console.log(action.payload);
+            console.log(action.payload);
             return {
                 ...state,
                 sourceID: action.payload

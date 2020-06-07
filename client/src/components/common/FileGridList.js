@@ -24,7 +24,7 @@ const styles = theme => ({
         backgroundColor: theme.palette.background.paper,
     },
     gridList: {
-        width: 500,
+        width: 600,
         // without the following, height would grow automatically
         // height: 450,
         // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
@@ -56,7 +56,7 @@ class FileGridList extends Component {
 
         return (
             <div className={classes.root}>
-                <GridList cellHeight={200} spacing={1} className={classes.gridList}>
+                <GridList cellHeight={300} spacing={1} className={classes.gridList}>
                     {this.props.post.files.map((tile) => {
                         let fileComponent, columns, rows;
                         switch (tile.type) {
@@ -70,7 +70,7 @@ class FileGridList extends Component {
 
                             case "video":
                                 columns = 2;
-                                rows = 2;
+                                rows = 1;
                                 fileComponent =
                                     // <video width="2000" controls>
                                     <video controls >

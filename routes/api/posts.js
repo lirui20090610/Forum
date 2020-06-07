@@ -31,8 +31,8 @@ router.post('/', auth, (req, res) => {
 
 });
 
-// @route post api/post/sourceID
-// @desc post an UUID for post sources
+// @route Get api/post/sourceID
+// @desc get an UUID for post sources
 // @access Public
 router.get('/sourceid', auth, (req, res) => {
     // setTimeout(function () { res.json(uuid()); }, 10000);
@@ -42,15 +42,16 @@ router.get('/sourceid', auth, (req, res) => {
 
 
 
-
+// storage info of the post resources
 const storage = multer.diskStorage({
     destination: "./static/posts",
     filename: function (req, file, callback) {
-        // callback(null, "IMAGE-" + path.extname(file.originalname));
-        callback(null, "IMAGE-" + file.originalname);
+        let type = file.mimetype.split('/')[0];
+        callback(null, type + '-' + file.originalname);
     }
 });
 
+//post resources restrictions
 const upload = multer({
     storage: storage,
     limits: { fileSize: 1024000000 },//1GB
@@ -60,12 +61,16 @@ const upload = multer({
 // @route Post api/post/upload
 // @desc user upload files
 // @access Public
-// router.post('/upload', auth, (req, res) => {
-//     // console.log(req);
-//     res.json({ msg: 'got it' });
-// });
-
 router.post('/upload', auth, upload, (req, res) => {
+    console.log("Request ---", req.body);
+    console.log("Request file ---", req.file);
+    res.json({ msg: 'got it' });
+});
+
+// @route Delete api/post/upload
+// @desc delete user upload files
+// @access Public
+router.post('/delete', auth, (req, res) => {
     console.log("Request ---", req.body);
     console.log("Request file ---", req.file);
     res.json({ msg: 'got it' });

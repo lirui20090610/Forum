@@ -25,6 +25,8 @@ import GifIcon from '@material-ui/icons/Gif';
 import VideoLabelIcon from '@material-ui/icons/VideoLabel';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import BarChartIcon from '@material-ui/icons/BarChart';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Backdrop from '@material-ui/core/Backdrop';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -80,6 +82,10 @@ const styles = theme => ({
     },
     dialog: {
         width: '60%'
+    },
+    backdrop: {
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
     },
 });
 
@@ -141,14 +147,8 @@ class PostModal extends Component {
         // case for adding file locally, adding url object to the state.file
         // check file numbers, call connected functions and apply corresponding UI change
         if (e.target.files) {
-            if (this.props.post.sourceID === null) {
-                this.props.getSourceID();
-            }
-            this.props.addFiles(e.target.files);
-            // console.log(URL.createObjectURL(e.target.files[0]));
-            // console.log(e.target.files[0]);
 
-            //reset the event, therefore same file would still trigger the onChange
+            this.props.addFiles(e.target.files);
             e.target.value = '';
         }
         //case for text input
@@ -190,101 +190,103 @@ class PostModal extends Component {
                     fullWidth={true}
                     TransitionComponent={Transition}
                 >
+                    <div>
+                        <Paper elevation={3} >
 
-                    <Paper elevation={3} >
+                            <div className={classes.paper}>
 
-                        <div className={classes.paper}>
+                                <IconButton onClick={this.toggle} className={classes.closeButton}>
+                                    <CloseIcon />
+                                </IconButton>
 
-                            <IconButton onClick={this.toggle} className={classes.closeButton}>
-                                <CloseIcon />
-                            </IconButton>
+                                <IconButton className={classes.avatarButton}>
+                                    <Avatar className={classes.avatar} alt="Remy Sharp" src="/static/avatars/1.jpg" />
+                                </IconButton>
+                                <Errors msg={this.state.msg} />
+                                <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange} encType="multipart/form-data">
 
-                            <IconButton className={classes.avatarButton}>
-                                <Avatar className={classes.avatar} alt="Remy Sharp" src="/static/avatars/1.jpg" />
-                            </IconButton>
-                            <Errors msg={this.state.msg} />
-                            <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange} encType="multipart/form-data">
+                                    <TextField
+                                        id="standard-basic"
+                                        margin="normal"
+                                        fullWidth
+                                        label="Post your post"
+                                        name="title"
+                                    />
 
-                                <TextField
-                                    id="standard-basic"
-                                    margin="normal"
-                                    fullWidth
-                                    label="Post your post"
-                                    name="title"
-                                />
+                                    <Grid container >
+                                        <Grid item>
+                                            <input accept="image/*" className={classes.input} id="icon-button-image" type="file" multiple disabled={this.props.post.imageFull} />
+                                            <label htmlFor="icon-button-image">
+                                                <IconButton color='secondary' component="span" disabled={this.props.post.imageFull}>
+                                                    <ImageIcon />
+                                                </IconButton>
+                                            </label>
+                                        </Grid>
 
-                                <Grid container >
-                                    <Grid item>
-                                        <input accept="image/*" className={classes.input} id="icon-button-image" type="file" multiple disabled={this.props.post.imageFull} />
-                                        <label htmlFor="icon-button-image">
-                                            <IconButton color='secondary' component="span" disabled={this.props.post.imageFull}>
-                                                <ImageIcon />
+                                        <Grid item>
+                                            <IconButton color='secondary'>
+                                                <GifIcon />
                                             </IconButton>
-                                        </label>
-                                    </Grid>
+                                        </Grid>
 
-                                    <Grid item>
-                                        <IconButton color='secondary'>
-                                            <GifIcon />
-                                        </IconButton>
-                                    </Grid>
+                                        <Grid item>
+                                            <input accept="video/*" className={classes.input} id="icon-button-video" type="file" multiple disabled={this.props.post.videoFull} />
+                                            <label htmlFor="icon-button-video">
+                                                <IconButton color='secondary' component="span" disabled={this.props.post.videoFull}>
+                                                    <VideoLabelIcon />
+                                                </IconButton>
+                                            </label>
 
-                                    <Grid item>
-                                        <input accept="video/*" className={classes.input} id="icon-button-video" type="file" multiple disabled={this.props.post.videoFull} />
-                                        <label htmlFor="icon-button-video">
-                                            <IconButton color='secondary' component="span" disabled={this.props.post.videoFull}>
-                                                <VideoLabelIcon />
+                                        </Grid>
+
+
+                                        <Grid item>
+                                            <IconButton color='secondary'>
+                                                <EmojiEmotionsIcon />
                                             </IconButton>
-                                        </label>
+                                        </Grid>
+
+
+                                        <Grid item>
+                                            <IconButton color='secondary'>
+                                                <BarChartIcon />
+                                            </IconButton>
+                                        </Grid>
+
 
                                     </Grid>
+                                    <TextField
+                                        variant="outlined"
+                                        margin="normal"
+                                        multiline
+                                        rows={9}
+                                        fullWidth
+                                        name="content"
+                                        label="Your thoughts"
+                                    >
+                                    </TextField>
+
+                                    <FileGridList />
+
+                                    <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        color="primary"
+                                        className={classes.submit}
+                                    >
+                                        Submit
+                                    </Button>
 
 
-                                    <Grid item>
-                                        <IconButton color='secondary'>
-                                            <EmojiEmotionsIcon />
-                                        </IconButton>
-                                    </Grid>
+                                </form>
+                            </div>
+                        </Paper>
+                        <Backdrop className={classes.backdrop} open={false} >
+                            <CircularProgress color="inherit" />
+                        </Backdrop>
+                    </div>
 
-
-                                    <Grid item>
-                                        <IconButton color='secondary'>
-                                            <BarChartIcon />
-                                        </IconButton>
-                                    </Grid>
-
-
-                                </Grid>
-                                <TextField
-                                    variant="outlined"
-                                    margin="normal"
-                                    multiline
-                                    rows={9}
-                                    fullWidth
-                                    name="content"
-                                    label="Your thoughts"
-                                >
-                                </TextField>
-
-                                <FileGridList />
-
-                                <Button
-                                    type="submit"
-                                    fullWidth
-                                    variant="contained"
-                                    color="primary"
-                                    className={classes.submit}
-                                >
-                                    Submit
-                            </Button>
-
-
-                            </form>
-
-                        </div>
-
-
-                    </Paper>
                 </Dialog>
 
             </Container >
