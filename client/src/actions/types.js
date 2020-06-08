@@ -12,9 +12,13 @@ export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAIL = 'REGISTER_FAIL';
 
 
+export const POST = 'POST';
 export const POST_SUCCESS = 'POST_SUCCESS';
 export const POST_FAIL = 'POST_FAIL';
-export const GOT_SOURCEID = 'GOT_SOURCEID';
+export const END_POST = 'END_POST';
+export const GET_SOURCEID = 'GET_SOURCEID';
+export const GET_SOURCEID_SUCCESS = 'GET_SOURCEID_SUCCESS';
+export const GET_SOURCEID_FAIL = 'GET_SOURCEID_FAIL';
 export const ADD_FILES = 'ADD_FILES';
 export const REMOVE_FILE = 'REMOVE_FILE';
 export const UPDATE_PROGRESS = 'UPDATE_PROGRESS';

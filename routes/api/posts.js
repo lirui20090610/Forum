@@ -2,6 +2,7 @@ const express = require('express');
 const path = require("path");
 const { uuid } = require('uuidv4');
 const multer = require("multer");
+const fs = require('fs');
 const router = express.Router();
 const auth = require('../../middleware/auth');
 
@@ -47,7 +48,7 @@ const storage = multer.diskStorage({
     destination: "./static/posts",
     filename: function (req, file, callback) {
         let type = file.mimetype.split('/')[0];
-        callback(null, type + '-' + file.originalname);
+        callback(null, type + '_' + file.originalname);
     }
 });
 
@@ -70,10 +71,13 @@ router.post('/upload', auth, upload, (req, res) => {
 // @route Delete api/post/upload
 // @desc delete user upload files
 // @access Public
-router.post('/delete', auth, (req, res) => {
+router.delete('/delete', auth, (req, res) => {
     console.log("Request ---", req.body);
-    console.log("Request file ---", req.file);
-    res.json({ msg: 'got it' });
+    fs.unlink('./static/posts/' + req.body.type + '_' + req.body.sourceID + '_' + req.body.index, function (err, data) {
+        if (err) return res.status(404).json({ msg: 'File not found' });
+        res.json({ msg: 'deleted' });
+    })
+
 });
 
 

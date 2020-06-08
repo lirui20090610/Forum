@@ -26,6 +26,7 @@ import VideoLabelIcon from '@material-ui/icons/VideoLabel';
 import EmojiEmotionsIcon from '@material-ui/icons/EmojiEmotions';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Alert from '@material-ui/lab/Alert';
 import Backdrop from '@material-ui/core/Backdrop';
 
 import { connect } from 'react-redux';
@@ -34,6 +35,7 @@ import Errors from '../common/Errors';
 import FileGridList from '../common/FileGridList';
 import {
     uploadPost,
+    endPost,
     addFiles,
     validateFile,
     getSourceID,
@@ -98,11 +100,12 @@ class PostModal extends Component {
         modal: false,
         title: '',
         content: '',
-        msg: null
+        tempFiles: null,
+        msg: null,
     }
     componentDidUpdate(prevProps) {
         const { error } = this.props;
-        const { sourceID } = this.props.post;
+        const { sourceID, loadingSourceID } = this.props.post;
         if (error !== prevProps.error) {
             // Check for register error
             if (error.id === 'POST_FAIL') {
@@ -112,6 +115,10 @@ class PostModal extends Component {
             }
         }
 
+        if (sourceID !== null && !loadingSourceID && this.state.tempFiles !== null) {
+            this.props.addFiles(this.state.tempFiles);
+            this.setState({ tempFiles: null })
+        }
         // console.log(this.props.post.sourceID === null, this.props.post.files.length != 0);
         // if (this.props.post.sourceID === null && this.props.post.files.length !== 0) {
         //     this.props.getSourceID();
@@ -142,13 +149,18 @@ class PostModal extends Component {
     }
 
     onChange = (e) => {
-
-
-        // case for adding file locally, adding url object to the state.file
-        // check file numbers, call connected functions and apply corresponding UI change
+        // case for adding file locally
+        // validate, call connected functions and apply corresponding UI change
         if (e.target.files) {
-
-            this.props.addFiles(e.target.files);
+            //check sourceID, if null, store current files and uploading until got a sourceID
+            if (this.props.post.sourceID === null) {
+                this.props.getSourceID();
+                this.setState({ tempFiles: [...e.target.files] });
+            }
+            //else uploding directly
+            else {
+                this.props.addFiles(e.target.files);
+            }
             e.target.value = '';
         }
         //case for text input
@@ -169,9 +181,19 @@ class PostModal extends Component {
             userID,
             content
         };
-        //Attempt to register
         this.props.uploadPost(newPost);
 
+    }
+
+    finishPost = (e) => {
+        this.setState({
+            modal: false,
+            title: '',
+            content: '',
+            tempFiles: null,
+            msg: null,
+        });
+        this.props.endPost();
     }
 
     render() {
@@ -282,9 +304,21 @@ class PostModal extends Component {
                                 </form>
                             </div>
                         </Paper>
-                        <Backdrop className={classes.backdrop} open={false} >
+                        <Backdrop className={classes.backdrop} open={this.props.post.isPosting} >
                             <CircularProgress color="inherit" />
                         </Backdrop>
+
+                        <Backdrop className={classes.backdrop} open={this.props.post.isPosted} >
+
+                            <Alert severity="success"
+                                action={
+                                    <IconButton size='small' onClick={this.finishPost}>
+                                        <CloseIcon />
+                                    </IconButton>
+                                }
+                            >Post successfully!</Alert>
+                        </Backdrop>
+
                     </div>
 
                 </Dialog>
@@ -315,4 +349,4 @@ const mapStateToProps = (state) => ({
 });
 
 PostModal = withStyles(styles)(PostModal);
-export default connect(mapStateToProps, { uploadPost, addFiles, validateFile, getSourceID, clearErrors })(PostModal);
+export default connect(mapStateToProps, { uploadPost, endPost, addFiles, getSourceID, clearErrors })(PostModal);

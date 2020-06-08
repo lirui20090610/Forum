@@ -1,10 +1,14 @@
 import axios from 'axios';
 import {
+    POST,
     POST_SUCCESS,
     POST_FAIL,
+    END_POST,
+    GET_SOURCEID,
+    GET_SOURCEID_SUCCESS,
+    GET_SOURCEID_FAIL,
     ADD_FILES,
     REMOVE_FILE,
-    GOT_SOURCEID,
     UPDATE_PROGRESS,
 } from './types';
 import { tokenConfig } from './authActions';
@@ -17,12 +21,13 @@ const videoSize = 10240000000; // 10GB
 // image size restrictions
 const imageWidth = 300;
 const imageHeight = 300;
-const imageQuality = 1;
+const imageQuality = 1; // range 0~1 (the higher the better)
 
 
 // Uploading users' posts to the server
 export const uploadPost = ({ title, userID, content }) => (dispatch, getState) => {
 
+    dispatch({ type: POST });
     // Request body
     const body = JSON.stringify({ title, userID, content });
 
@@ -43,15 +48,19 @@ export const uploadPost = ({ title, userID, content }) => (dispatch, getState) =
 
 
 export const getSourceID = () => (dispatch, getState) => {
+    dispatch({ type: GET_SOURCEID });
     axios.get('/api/post/sourceid', tokenConfig(getState))
         .then(res =>
             dispatch({
-                type: GOT_SOURCEID,
+                type: GET_SOURCEID_SUCCESS,
                 payload: res.data
             }))
-        .catch(err =>
+        .catch(err => {
+            dispatch({
+                type: GET_SOURCEID_FAIL,
+            });
             dispatch(returnErrors(err.response.data, err.response.status))
-        );
+        });
 
 }
 
@@ -65,6 +74,15 @@ export const removeFile = file => (dispatch, getState) => {
         videoNum--;
     }
 
+    //For optimal memory usage, free URLs when we no longer need them
+    URL.revokeObjectURL(file.source);
+
+    const body = JSON.stringify({
+        sourceID: getState().post.sourceID,
+        type: file.type,
+        index: file.index
+    });
+
     dispatch({
         type: REMOVE_FILE,
         payload: {
@@ -75,11 +93,17 @@ export const removeFile = file => (dispatch, getState) => {
             videoFull: videoNum === videoLimit,
         }
     });
+    let config = tokenConfig(getState);
+    config.data = body;
+    // Users need jwt in order to be authenticated and then post
+    axios.delete('/api/post/delete', config)
+        .then(res =>
+            console.log(res)
+        )
 };
 
 export const addFiles = files => (dispatch, getState) => {
     let fileLength = files.length;
-    let validFiles = [];
     let imageNum = getState().post.imageNum;
     let videoNum = getState().post.videoNum;
 
@@ -94,10 +118,6 @@ export const addFiles = files => (dispatch, getState) => {
         }
         imageNum += fileLength;
 
-
-        // console.log(uploadImages(files[0]));
-        // // console.log(validFiles);
-        // [...files].map(image => uploadImages(image, getState().auth.token));
         [...files].map(image => uploadImage(image, dispatch, getState));
 
     } else if (files[0].type.includes('video')) {
@@ -108,26 +128,6 @@ export const addFiles = files => (dispatch, getState) => {
         videoNum += fileLength;
         [...files].map(video => uploadVideo(video, dispatch, getState));
     }
-
-    // console.log(validFiles);
-    // dispatch({
-    //     type: ADD_FILES,
-    //     payload: {
-    //         imageNum,
-    //         videoNum,
-    //         files: [...getState().post.files, ...[...files].map(element =>
-    //             ({
-    //                 type: element.type.split("/")[0],
-    //                 size: element.size,
-    //                 progress: 0,
-    //                 source: URL.createObjectURL(element)
-    //             })
-    //         )],
-    //         imageFull: imageNum === imageLimit,
-    //         videoFull: videoNum === videoLimit,
-    //         needValidate: true,
-    //     }
-    // });
 
 };
 
@@ -175,12 +175,14 @@ export const uploadImage = (image, dispatch, getState) => {
                 type: image.type.split("/")[0],
                 progress: 0,
                 source: URL.createObjectURL(blob),
+                index: getState().post.fileNum
             };
             dispatch({
                 type: ADD_FILES,
                 payload: {
-                    imageNum: getState().post.imageNum++,
+                    imageNum: getState().post.imageNum += 1,
                     videoNum: getState().post.videoNum,
+                    fileNum: getState().post.fileNum += 1,
                     files: [...getState().post.files, file],
                     imageFull: getState().post.imageNum++ === imageLimit,
                     videoFull: getState().post.videoNum === videoLimit,
@@ -189,7 +191,7 @@ export const uploadImage = (image, dispatch, getState) => {
 
             // filename format: sourceID_fileindex
             console.log(getState().post.sourceID);
-            data.append('postSRC', blob, getState().post.sourceID + '_' + getState().post.files.length);
+            data.append('postSRC', blob, getState().post.sourceID + '_' + file.index);
             // console.log(data);
             axios.post('/api/post/upload', data, fileConfig(file, dispatch, getState))
                 .then(res => {
@@ -215,13 +217,15 @@ export const uploadVideo = (video, dispatch, getState) => {
         type: video.type.split("/")[0],
         progress: 0,
         source: URL.createObjectURL(video),
+        index: getState().post.fileNum
     };
 
     dispatch({
         type: ADD_FILES,
         payload: {
             imageNum: getState().post.imageNum,
-            videoNum: getState().post.videoNum++,
+            videoNum: getState().post.videoNum += 1,
+            fileNum: getState().post.fileNum += 1,
             files: [...getState().post.files, file],
             imageFull: getState().post.imageNum === imageLimit,
             videoFull: getState().post.videoNum++ === videoLimit,
@@ -232,7 +236,7 @@ export const uploadVideo = (video, dispatch, getState) => {
 
     let data = new FormData();
     console.log(getState().post.sourceID);
-    data.append('postSRC', video, getState().post.sourceID + '_' + getState().post.files.length);
+    data.append('postSRC', video, getState().post.sourceID + '_' + file.index);
 
     axios.post('/api/post/upload', data, fileConfig(file, dispatch, getState))
         .then(res => {
@@ -240,6 +244,13 @@ export const uploadVideo = (video, dispatch, getState) => {
         });
 
 
+}
+
+export const endPost = () => (dispatch, getState) => {
+    getState().post.files.map(e => URL.revokeObjectURL(e.source));
+    dispatch({
+        type: END_POST
+    })
 }
 
 export const fileConfig = (file, dispatch, getState) => {
