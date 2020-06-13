@@ -1,3 +1,6 @@
+// This file stands for displaying users' input files (Images, Videos ...)
+
+
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';

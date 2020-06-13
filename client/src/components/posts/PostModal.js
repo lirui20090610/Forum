@@ -11,6 +11,9 @@ import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
 import Slide from '@material-ui/core/Slide';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
@@ -28,16 +31,20 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Alert from '@material-ui/lab/Alert';
 import Backdrop from '@material-ui/core/Backdrop';
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Errors from '../common/Errors';
 import FileGridList from '../common/FileGridList';
+import EmoteGridList from '../common/EmoteGridList';
 import {
     uploadPost,
     endPost,
     addFiles,
-    validateFile,
     getSourceID,
 } from '../../actions/postActions';
 import { clearErrors } from '../../actions/errorActions';
@@ -45,7 +52,6 @@ import { clearErrors } from '../../actions/errorActions';
 
 
 const styles = theme => ({
-
     paper: {
         // marginTop: theme.spacing(8),
         display: 'flex',
@@ -102,6 +108,23 @@ class PostModal extends Component {
         content: '',
         tempFiles: null,
         msg: null,
+        emojiModal: false,
+        // emoji: [
+        //     'U+1F600', 'U+1F601', 'U+1F606', 'U+1F605',
+        //     'U+1F923', 'U+1F602', 'U+1F642', 'U+1F643',
+        //     'U+1F609', 'U+1F60A', 'U+1F607', 'U+1F970',
+        //     'U+1F60D', 'U+1F929', 'U+1F618', 'U+1F617',
+        //     'U+263A', 'U+1F61A', 'U+1F619', 'U+1F61B',
+        //     'U+1F61C', 'U+1F92A', 'U+1F61D', 'U+1F911'
+        // ]
+        emoji: [
+            '\u{1F600}', '\u{1F601}', '\u{1F606}', '\u{1F605}',
+            '\u{1F923}', '\u{1F602}', '\u{1F642}', '\u{1F643}',
+            '\u{1F609}', '\u{1F60A}', '\u{1F607}', '\u{1F970}',
+            '\u{1F60D}', '\u{1F929}', '\u{1F618}', '\u{1F617}',
+            '\u{1F917}', '\u{1F61A}', '\u{1F619}', '\u{1F61B}',
+            '\u{1F61C}', '\u{1F92A}', '\u{1F61D}', '\u{1F911}'
+        ]
     }
     componentDidUpdate(prevProps) {
         const { error } = this.props;
@@ -147,7 +170,19 @@ class PostModal extends Component {
         }
 
     }
-
+    emojiToggle = () => {
+        this.setState({
+            emojiModal: !this.state.emojiModal
+        });
+    }
+    pickEmoji = (e, unicode) => {
+        console.log("here");
+        console.log(unicode);
+        this.setState({
+            content: this.state.content + unicode,
+            emojiModal: !this.state.emojiModal
+        });
+    }
     onChange = (e) => {
         // case for adding file locally
         // validate, call connected functions and apply corresponding UI change
@@ -201,16 +236,19 @@ class PostModal extends Component {
 
         return (
 
+            // <Errors msg={this.state.msg} />
+
             <Container maxWidth="xs">
                 <CssBaseline />
                 <Fab color="secondary" onClick={this.toggle}>
                     <EditIcon />
                 </Fab>
-
+                <Errors msg={this.state.msg} />
                 <Dialog
                     open={this.state.modal}
                     fullWidth={true}
                     TransitionComponent={Transition}
+                    onClose={this.toggle}
                 >
                     <div>
                         <Paper elevation={3} >
@@ -224,7 +262,7 @@ class PostModal extends Component {
                                 <IconButton className={classes.avatarButton}>
                                     <Avatar className={classes.avatar} alt="Remy Sharp" src="/static/avatars/1.jpg" />
                                 </IconButton>
-                                <Errors msg={this.state.msg} />
+
                                 <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange} encType="multipart/form-data">
 
                                     <TextField
@@ -263,9 +301,32 @@ class PostModal extends Component {
 
 
                                         <Grid item>
-                                            <IconButton color='secondary'>
+                                            <IconButton color='secondary' onClick={this.emojiToggle}>
                                                 <EmojiEmotionsIcon />
                                             </IconButton>
+                                            <Dialog
+                                                open={this.state.emojiModal}
+                                                onClose={this.emojiToggle}
+                                            >
+                                                <DialogTitle >Pick emotes</DialogTitle>
+                                                <DialogContent>
+                                                    <GridList cellHeight={40} cols={8} spacing={0}>
+                                                        {this.state.emoji.map(emoji => (
+                                                            <GridListTile >
+                                                                <Button variant="text" onClick={((e) => this.pickEmoji(e, emoji))} color="primary">
+                                                                    {emoji}
+                                                                </Button>
+                                                                {/* <h3 onClick={((e) => this.pickEmoji(e, emoji))}>{emoji}</h3> */}
+                                                            </GridListTile>
+                                                        ))}
+                                                    </GridList>
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <Button variant="contained" onClick={this.emojiToggle} color="primary">
+                                                        Cancel
+                                                    </Button>
+                                                </DialogActions>
+                                            </Dialog>
                                         </Grid>
 
 
@@ -285,6 +346,7 @@ class PostModal extends Component {
                                         fullWidth
                                         name="content"
                                         label="Your thoughts"
+                                        value={this.state.content}
                                     >
                                     </TextField>
 
@@ -309,21 +371,17 @@ class PostModal extends Component {
                         </Backdrop>
 
                         <Backdrop className={classes.backdrop} open={this.props.post.isPosted} >
-
-                            <Alert severity="success"
-                                action={
-                                    <IconButton size='small' onClick={this.finishPost}>
-                                        <CloseIcon />
-                                    </IconButton>
-                                }
-                            >Post successfully!</Alert>
+                            <MuiAlert onClose={this.finishPost} elevation={6} variant="filled" severity="success">
+                                Post successfully!
+                            </MuiAlert>
                         </Backdrop>
-
                     </div>
 
                 </Dialog>
 
             </Container >
+
+
 
 
         )

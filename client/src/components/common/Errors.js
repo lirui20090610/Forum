@@ -1,21 +1,44 @@
 import React, { Component } from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import { Alert, AlertTitle } from '@material-ui/lab';
+import MuiAlert from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
-
+import Snackbar from '@material-ui/core/Snackbar';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+
+
+
 export default class Errors extends Component {
+    state = {
+        toggle: true,
+    }
+    componentWillReceiveProps() {
+        this.setState({
+            toggle: true
+        });
+    }
+
+
+    handleClose = () => {
+        this.setState({
+            toggle: false,
+        });
+    }
     render() {
+        const { classes } = this.props;
         let errors;
 
         this.props.msg ?
             errors =
-            <Box width="75%">
-                <Alert severity="error" >
-                    <AlertTitle>Error</AlertTitle>
-                    <strong>{this.props.msg}</strong>
-                </Alert >
+            <Box>
+                <Snackbar open={this.state.toggle} onClose={this.handleClose}>
+                    <MuiAlert onClose={this.handleClose} elevation={6} variant="filled" severity="error">
+                        {this.props.msg}
+                    </MuiAlert>
+                </Snackbar>
+
             </Box>
             :
             errors = null
@@ -34,7 +57,7 @@ Errors.propTypes = {
 // const mapStateToProps = (state) => ({
 //     msg: state.error.msg
 // });
-
-// export default connect(mapStateToProps, null)(Errors);
+// Errors = withStyles(styles)(Errors);
+// export default Errors;
 
 
