@@ -10,6 +10,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
+import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -27,7 +28,9 @@ import { clearErrors } from '../../../actions/errorActions';
 
 
 const styles = theme => ({
-
+    root: {
+        height: '100vh',
+    },
     paper: {
         marginTop: theme.spacing(8),
         display: 'flex',
@@ -52,7 +55,15 @@ const styles = theme => ({
     },
     alert: {
         width: '100%',
-    }
+    },
+    image: {
+        backgroundImage: `url(${"/static/avatars/1.jpg"})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundColor:
+            theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+    },
 
 });
 
@@ -127,99 +138,125 @@ class RegisterModal extends Component {
                 <Button variant="contained" color="primary" onClick={this.toggle} >
                     Register
                 </Button>
-                <Dialog open={this.state.modal}>
+                <Dialog open={this.state.modal} >
+                    <Grid container className={classes.root}>
+                        <Grid item xs={false} sm={4} md={4} className={classes.image} />
+                        <Grid item xs={12} sm={8} md={8} component={Paper} elevation={6} square>
 
-                    <IconButton onClick={this.toggle} className={classes.CloseButton}>
-                        <CloseIcon />
-                    </IconButton>
-                    <div className={classes.paper} >
-                        <Avatar className={classes.avatar}>
-                            <LockOutlinedIcon />
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
-                            Sign up
-                            </Typography>
-                        <Errors msg={this.state.msg} />
-                        <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        autoComplete="fname"
-                                        name="firstName"
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        id="firstName"
-                                        label="First Name"
-                                        autoFocus
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        id="lastName"
-                                        label="Last Name"
-                                        name="lastName"
-                                        autoComplete="lname"
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        id="email"
-                                        label="Email Address"
-                                        name="email"
-                                        autoComplete="email"
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        name="password"
-                                        label="Password"
-                                        type="password"
-                                        id="password"
-                                        autoComplete="current-password"
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <FormControlLabel
-                                        control={<Checkbox value="allowExtraEmails" color="primary" />}
-                                        label="I want to receive inspiration, marketing promotions and updates via email."
-                                    />
-                                </Grid>
-                            </Grid>
+                            <div className={classes.paper} >
+                                <IconButton onClick={this.toggle} className={classes.CloseButton}>
+                                    <CloseIcon />
+                                </IconButton>
+                                <Avatar className={classes.avatar}>
+                                    <LockOutlinedIcon />
+                                </Avatar>
+                                <Typography component="h1" variant="h5">
+                                    Sign up
+                                </Typography>
+                                {/* <Typography component="h5" variant="b1">
+                                    Validate your email to register a PandaPressX account.
+                                </Typography> */}
+                                <Errors msg={this.state.msg} />
+                                <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12} sm={6}>
+                                            <TextField
+                                                autoComplete="fname"
+                                                name="firstName"
+                                                variant="outlined"
+                                                required
+                                                fullWidth
+                                                id="firstName"
+                                                label="First Name"
+                                                autoFocus
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6}>
+                                            <TextField
+                                                variant="outlined"
+                                                required
+                                                fullWidth
+                                                id="lastName"
+                                                label="Last Name"
+                                                name="lastName"
+                                                autoComplete="lname"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                variant="outlined"
+                                                required
+                                                fullWidth
+                                                id="email"
+                                                label="Email Address"
+                                                name="email"
+                                                autoComplete="email"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                variant="outlined"
+                                                required
+                                                fullWidth
+                                                name="password"
+                                                label="Password"
+                                                type="password"
+                                                id="password"
+                                                autoComplete="current-password"
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <FormControlLabel
+                                                control={<Checkbox value="allowExtraEmails" color="primary" />}
+                                                label="I want to receive inspiration, marketing promotions and updates via email."
+                                            />
+                                        </Grid>
+                                    </Grid>
 
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                className={classes.submit}
-                            >
-                                Sign Up
+                                    <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        color="primary"
+                                        className={classes.submit}
+                                    >
+                                        Sign Up
                                     </Button>
-
-
-                            <Grid container justify="flex-end">
-                                <Grid item>
-                                    <Link component={RouterLink} to="/login" onClick={this.toggle} >
-                                        Already have an account? Sign in
+                                    {/* <Grid item xs={12} cols={10}>
+                                            <TextField
+                                                variant="outlined"
+                                                required
+                                                fullWidth
+                                                id="email"
+                                                label="Email Address"
+                                                name="email"
+                                                autoComplete="email"
+                                            />
+                                        </Grid>
+                                        <Button
+                                            type="submit"
+                                            fullWidth
+                                            variant="contained"
+                                            color="primary"
+                                            className={classes.submit}
+                                        >
+                                            Validate email
+                                        </Button>
+                                    </Grid> */}
+                                    <Grid container justify="flex-end">
+                                        <Grid item>
+                                            <Link component={RouterLink} to="/login" onClick={this.toggle} >
+                                                Already have an account? Sign in
                                         </Link>
-                                </Grid>
-                            </Grid>
-                        </form>
-                    </div>
-                    <Box mt={5}>
-                        <Copyright />
-                    </Box>
-
+                                        </Grid>
+                                    </Grid>
+                                </form>
+                            </div>
+                            <Box mt={5}>
+                                <Copyright />
+                            </Box>
+                        </Grid>
+                    </Grid>
                 </Dialog>
             </Container>
         );

@@ -394,7 +394,6 @@ PostModal.propTypes = {
     error: PropTypes.object,
     uploadPost: PropTypes.func.isRequired,
     addFiles: PropTypes.func.isRequired,
-    validateFile: PropTypes.func.isRequired,
     getSourceID: PropTypes.func.isRequired,
     clearErrors: PropTypes.func.isRequired
 }

@@ -24,6 +24,8 @@ import PostModal from './posts/PostModal';
 import Demo from './posts/demo';
 import Demo_1 from './posts/demo1';
 
+
+
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -190,7 +192,6 @@ class AppDrawer extends Component {
 
                     <PostModal />
                     <DashboardPosts />
-
 
                     {/* <Demo /> */}
 

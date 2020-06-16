@@ -9,6 +9,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
+import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -28,6 +29,7 @@ import { clearErrors } from '../../../actions/errorActions';
 
 
 const styles = theme => ({
+
     paper: {
         marginTop: theme.spacing(8),
         display: 'flex',
@@ -52,7 +54,15 @@ const styles = theme => ({
     },
     alert: {
         width: '100%',
-    }
+    },
+    image: {
+        backgroundImage: `url(${"/static/avatars/1.jpg"})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundColor:
+            theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+    },
 });
 
 class LoginModal extends Component {
@@ -119,81 +129,93 @@ class LoginModal extends Component {
         const { classes } = this.props;
         return (
 
+
+
             <Container maxWidth="xs" >
                 <CssBaseline />
                 <Button variant="contained" color="primary" onClick={this.toggle} >
                     Login
                 </Button>
-                <Dialog open={this.state.modal}>
-                    <div className={classes.paper}>
-                        <IconButton onClick={this.toggle} className={classes.CloseButton}>
-                            <CloseIcon />
-                        </IconButton>
-                        <Avatar className={classes.avatar}>
-                            <LockOutlinedIcon />
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
-                            Sign in
-                        </Typography>
-                        <Errors msg={this.state.msg} />
-                        <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="email"
-                                label="Email Address"
-                                name="email"
-                                autoComplete="email"
-                                autoFocus
-                            />
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Password"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox value="remember" color="primary" />}
-                                label="Remember me"
-                            />
-                            {/* <Link > */}
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                className={classes.submit}
-                            >
-                                Sign In
-                                </Button>
-                            {/* </Link> */}
+                <Dialog open={this.state.modal} >
 
-                            <Grid container>
-                                <Grid item xs>
-                                    <Link component={RouterLink} to="/forgetpassword" >
-                                        Forgot password?
+                    <Grid container >
+                        <Grid item xs={false} sm={4} md={4} className={classes.image} />
+                        <Grid item xs={12} sm={8} md={8} component={Paper} elevation={6} square>
+                            <div className={classes.paper}>
+                                <IconButton onClick={this.toggle} className={classes.CloseButton}>
+                                    <CloseIcon />
+                                </IconButton>
+                                <Avatar className={classes.avatar}>
+                                    <LockOutlinedIcon />
+                                </Avatar>
+                                <Typography component="h1" variant="h5">
+                                    Sign in
+                        </Typography>
+                                <Errors msg={this.state.msg} />
+                                <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
+                                    <TextField
+                                        variant="outlined"
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        id="email"
+                                        label="Email Address"
+                                        name="email"
+                                        autoComplete="email"
+                                        autoFocus
+                                    />
+                                    <TextField
+                                        variant="outlined"
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        name="password"
+                                        label="Password"
+                                        type="password"
+                                        id="password"
+                                        autoComplete="current-password"
+                                    />
+                                    <FormControlLabel
+                                        control={<Checkbox value="remember" color="primary" />}
+                                        label="Remember me"
+                                    />
+
+                                    <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        color="primary"
+                                        className={classes.submit}
+                                    >
+                                        Sign In
+                                </Button>
+
+
+                                    <Grid container>
+                                        <Grid item xs>
+                                            <Link component={RouterLink} to="/forgetpassword" >
+                                                Forgot password?
                                     </Link>
-                                </Grid>
-                                <Grid item>
-                                    <Link component={RouterLink} to="/signup" onClick={this.toggle}>
-                                        Don't have an account? Sign Up
+                                        </Grid>
+                                        <Grid item>
+                                            <Link component={RouterLink} to="/signup" onClick={this.toggle}>
+                                                Don't have an account? Sign Up
                                     </Link>
-                                </Grid>
-                            </Grid>
-                        </form>
-                    </div>
-                    <Box mt={8}>
-                        <Copyright />
-                    </Box>
+                                        </Grid>
+                                    </Grid>
+                                </form>
+
+                                <Box mt={8}>
+                                    <Copyright />
+                                </Box>
+                            </div>
+                        </Grid >
+                    </Grid>
+
                 </Dialog>
             </Container>
+
+
         )
     };
 }
