@@ -38,7 +38,7 @@ export const uploadPost = ({ title, userID, content }) => (dispatch, getState) =
             payload: res.data
         }))
         .catch(err => {
-            dispatch(returnErrors(err.response.data, err.response.status, 'POST_FAIL'));
+            dispatch(returnErrors(err.response.data.msg));
             dispatch({
                 type: POST_FAIL
             });
@@ -59,7 +59,7 @@ export const getSourceID = () => (dispatch, getState) => {
             dispatch({
                 type: GET_SOURCEID_FAIL,
             });
-            dispatch(returnErrors(err.response.data, err.response.status))
+            dispatch(returnErrors(err.response.data.msg))
         });
 
 }
@@ -113,7 +113,7 @@ export const addFiles = files => (dispatch, getState) => {
 
     if (files[0].type.includes('image')) {
         if (imageNum + fileLength > imageLimit) {
-            dispatch(returnErrors({ msg: `Picking too many images, Only ${imageLimit} images are allowd.` }, {}, 'POST_FAIL'));
+            dispatch(returnErrors(`Picking too many images, Only ${imageLimit} images are allowd.`));
             return;
         }
         imageNum += fileLength;
@@ -122,7 +122,7 @@ export const addFiles = files => (dispatch, getState) => {
 
     } else if (files[0].type.includes('video')) {
         if (videoNum + fileLength > videoLimit) {
-            dispatch(returnErrors({ msg: `Picking too many videos, Only ${videoLimit} videos are allowd.` }, {}, 'POST_FAIL'));
+            dispatch(returnErrors(`Picking too many videos, Only ${videoLimit} videos are allowd.`));
             return;
         }
         videoNum += fileLength;
@@ -208,7 +208,7 @@ export const uploadImage = (image, dispatch, getState) => {
 
 export const uploadVideo = (video, dispatch, getState) => {
     if (video.size > videoSize) {
-        dispatch(returnErrors({ msg: `Video is oversized, Only videos within 1GB are are allowd.` }, {}, 'POST_FAIL'));
+        dispatch(returnErrors(`Video is oversized, Only videos within 1GB are are allowd.`));
         return;
     }
 

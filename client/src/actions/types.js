@@ -5,6 +5,9 @@ export const ITEMS_LOADING = 'ITEMS_LOADING';
 
 export const USER_LOADING = 'USER_LOADING';
 export const USER_LOADED = 'USER_LOADED';
+export const EMAIL_VALIDATING = 'EMAIL_VALIDATING';
+export const EMAIL_VALID = 'EMAIL_VALID';
+export const EMAIL_INVALID = 'EMAIL_INVALID';
 export const AUTH_ERROR = 'AUTH_ERROR';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAIL = 'LOGIN_FAIL';

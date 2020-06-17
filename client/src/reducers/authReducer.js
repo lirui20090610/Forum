@@ -1,6 +1,10 @@
 import {
+    USER_LOADING,
     USER_LOADED,
     AUTH_ERROR,
+    EMAIL_VALIDATING,
+    EMAIL_VALID,
+    EMAIL_INVALID,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     LOGOUT_SUCCESS,
@@ -12,16 +16,25 @@ const initialState = {
     token: localStorage.getItem('token'),
     isAuthenticated: null,
     user: null,
+    loadingUser: false,
+    validatingEmail: false,
+    validEmail: false,
+    email: null
 }
 
 export default function (state = initialState, action) {
     switch (action.type) {
-
+        case USER_LOADING:
+            return {
+                ...state,
+                loadingUser: true
+            }
         case USER_LOADED:
             return {
                 ...state,
                 isAuthenticated: true,
-                user: action.payload
+                user: action.payload,
+                loadingUser: false
             };
 
         case LOGIN_SUCCESS:
@@ -45,6 +58,7 @@ export default function (state = initialState, action) {
                 token: null,
                 user: null,
                 isAuthenticated: false,
+                loadingUser: false
             };
 
         default:

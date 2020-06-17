@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import APPDrawer from './components/APPDrawer';
+import Errors from './components/common/Errors';
 import { Container } from 'reactstrap';
 
 import { Provider } from 'react-redux';
@@ -24,6 +25,7 @@ class App extends Component {
             {/* <ItemModal /> */}
             {/* <ShoppingList /> */}
           </Container>
+          <Errors />
         </div>
       </Provider>
     );

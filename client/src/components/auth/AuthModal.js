@@ -10,6 +10,8 @@ import RegisterModal from './authModal/RegisterModal';
 import LoginModal from './authModal/LoginModal';
 import Logout from './authModal/Logout';
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
@@ -28,8 +30,13 @@ class AuthModal extends Component {
     }
     render() {
         const { classes } = this.props;
-        const { user } = this.props.auth;
-        if (user) {
+        const { user, loadingUser } = this.props.auth;
+
+        if (loadingUser) {
+            manageLogin = (
+                <CircularProgress color="inherit" />
+            );
+        } else if (user) {
             manageLogin = (
                 <div className={classes.appBarButton} >
                     <span className="navbar-text mr-3">
@@ -51,17 +58,17 @@ class AuthModal extends Component {
             <div>
                 <Router>
                     <Switch>
-                        <Route path='/' exact key='main' >
+                        <Route path={['/', '/login', '/signup']} exact key='main' >
                             {manageLogin}
                         </Route>
 
-                        <Route path='/login' exact key='login'>
+                        {/* <Route path='/login' exact key='login'>
                             {manageLogin}
                         </Route>
 
                         <Route path='/signup' exact key='signup'>
                             {manageLogin}
-                        </Route>
+                        </Route> */}
 
                         <Route path='/forgetpassword' exact>
                             forget password

@@ -70,40 +70,32 @@ class LoginModal extends Component {
         modal: false,
         email: '',
         password: '',
-        msg: null
     }
 
 
-    componentWillMount() {
+
+    componentWillReceiveProps() {
         this.props.history.location.pathname === '/login' ?
             this.setState({ modal: true })
             : null
     }
+
     componentDidUpdate(prevProps) {
-
-        const { error } = this.props;
-        if (error !== prevProps.error) {
-            // Check for register error
-            if (error.id === 'LOGIN_FAIL') {
-                this.setState({ msg: error.msg.msg })
-            } else {
-                this.setState({ msg: null })
-            }
-        }
-
 
     }
 
     toggle = () => {
-        // Clear errors
-        this.props.clearErrors();
         this.setState({
             modal: !this.state.modal
         });
     }
 
+
+
     onChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
+        this.setState({
+            [e.target.name]: e.target.value,
+        });
     }
 
     onSubmit = (e) => {
@@ -151,7 +143,6 @@ class LoginModal extends Component {
                                 <Typography component="h1" variant="h5">
                                     Sign in
                         </Typography>
-                                <Errors msg={this.state.msg} />
                                 <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
                                     <TextField
                                         variant="outlined"
@@ -221,15 +212,12 @@ class LoginModal extends Component {
 }
 
 LoginModal.propTypes = {
-    error: PropTypes.object.isRequired,
     login: PropTypes.func.isRequired,
-    clearErrors: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => ({
-    error: state.error
 });
 
 LoginModal = withRouter(LoginModal);
 LoginModal = (withStyles(styles)(LoginModal));
-export default connect((mapStateToProps), { login, clearErrors })(LoginModal);
+export default connect((mapStateToProps), { login })(LoginModal);

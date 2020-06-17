@@ -75,39 +75,28 @@ class RegisterModal extends Component {
         lastName: '',
         email: '',
         password: '',
-        msg: null
     }
 
 
-    componentDidMount() {
-
+    componentWillReceiveProps() {
         this.props.history.location.pathname === '/signup' ?
             this.setState({ modal: true })
             : null
-
     }
     componentDidUpdate(prevProps) {
-        const { error } = this.props;
-        if (error !== prevProps.error) {
-            // Check for register error
-            if (error.id === 'REGISTER_FAIL') {
-                this.setState({ msg: error.msg.msg })
-            } else {
-                this.setState({ msg: null })
-            }
-        }
+
     }
 
     toggle = () => {
-        // Clear errors
-        this.props.clearErrors();
         this.setState({
             modal: !this.state.modal
         });
     }
 
     onChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
+        this.setState({
+            [e.target.name]: e.target.value,
+        });
     }
 
     onSubmit = (e) => {
@@ -130,6 +119,7 @@ class RegisterModal extends Component {
 
     render() {
         const { classes } = this.props;
+        const { } = this.props.auth;
 
         return (
 
@@ -156,7 +146,6 @@ class RegisterModal extends Component {
                                 {/* <Typography component="h5" variant="b1">
                                     Validate your email to register a PandaPressX account.
                                 </Typography> */}
-                                <Errors msg={this.state.msg} />
                                 <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
                                     <Grid container spacing={2}>
                                         <Grid item xs={12} sm={6}>
@@ -266,18 +255,16 @@ class RegisterModal extends Component {
 
 RegisterModal.propTypes = {
     // classes: PropTypes.object.isRequired,
-    isAuthenticated: PropTypes.bool,
-    // error: PropTypes.object.isRequired,
+    auth: PropTypes.object.isRequired,
     register: PropTypes.func.isRequired,
-    clearErrors: PropTypes.func.isRequired
+
 }
 
 
 const mapStateToProps = (state) => ({
-    // isAuthenticated: state.auth.isAuthenticated,
-    error: state.error
+    auth: state.auth,
 });
 
 RegisterModal = withRouter(RegisterModal);
 RegisterModal = withStyles(styles)(RegisterModal);
-export default connect(mapStateToProps, { register, clearErrors })(RegisterModal);
+export default connect(mapStateToProps, { register })(RegisterModal);

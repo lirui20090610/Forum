@@ -38,7 +38,6 @@ import GridListTile from '@material-ui/core/GridListTile';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import Errors from '../common/Errors';
 import FileGridList from '../common/FileGridList';
 import EmoteGridList from '../common/EmoteGridList';
 import {
@@ -50,7 +49,14 @@ import {
 import { clearErrors } from '../../actions/errorActions';
 
 
-
+const emoji = [
+    '\u{1F600}', '\u{1F601}', '\u{1F606}', '\u{1F605}',
+    '\u{1F923}', '\u{1F602}', '\u{1F642}', '\u{1F643}',
+    '\u{1F609}', '\u{1F60A}', '\u{1F607}', '\u{1F970}',
+    '\u{1F60D}', '\u{1F929}', '\u{1F618}', '\u{1F617}',
+    '\u{1F917}', '\u{1F61A}', '\u{1F619}', '\u{1F61B}',
+    '\u{1F61C}', '\u{1F92A}', '\u{1F61D}', '\u{1F911}'
+];
 const styles = theme => ({
     paper: {
         // marginTop: theme.spacing(8),
@@ -107,36 +113,11 @@ class PostModal extends Component {
         title: '',
         content: '',
         tempFiles: null,
-        msg: null,
         emojiModal: false,
-        // emoji: [
-        //     'U+1F600', 'U+1F601', 'U+1F606', 'U+1F605',
-        //     'U+1F923', 'U+1F602', 'U+1F642', 'U+1F643',
-        //     'U+1F609', 'U+1F60A', 'U+1F607', 'U+1F970',
-        //     'U+1F60D', 'U+1F929', 'U+1F618', 'U+1F617',
-        //     'U+263A', 'U+1F61A', 'U+1F619', 'U+1F61B',
-        //     'U+1F61C', 'U+1F92A', 'U+1F61D', 'U+1F911'
-        // ]
-        emoji: [
-            '\u{1F600}', '\u{1F601}', '\u{1F606}', '\u{1F605}',
-            '\u{1F923}', '\u{1F602}', '\u{1F642}', '\u{1F643}',
-            '\u{1F609}', '\u{1F60A}', '\u{1F607}', '\u{1F970}',
-            '\u{1F60D}', '\u{1F929}', '\u{1F618}', '\u{1F617}',
-            '\u{1F917}', '\u{1F61A}', '\u{1F619}', '\u{1F61B}',
-            '\u{1F61C}', '\u{1F92A}', '\u{1F61D}', '\u{1F911}'
-        ]
     }
     componentDidUpdate(prevProps) {
-        const { error } = this.props;
+
         const { sourceID, loadingSourceID } = this.props.post;
-        if (error !== prevProps.error) {
-            // Check for register error
-            if (error.id === 'POST_FAIL') {
-                this.setState({ msg: error.msg.msg })
-            } else {
-                this.setState({ msg: null })
-            }
-        }
 
         if (sourceID !== null && !loadingSourceID && this.state.tempFiles !== null) {
             this.props.addFiles(this.state.tempFiles);
@@ -162,8 +143,6 @@ class PostModal extends Component {
 
             console.log("unauthorized");
         } else {
-            // Clear errors
-            this.props.clearErrors();
             this.setState({
                 modal: !this.state.modal
             });
@@ -176,8 +155,6 @@ class PostModal extends Component {
         });
     }
     pickEmoji = (e, unicode) => {
-        console.log("here");
-        console.log(unicode);
         this.setState({
             content: this.state.content + unicode,
             emojiModal: !this.state.emojiModal
@@ -190,7 +167,9 @@ class PostModal extends Component {
             //check sourceID, if null, store current files and uploading until got a sourceID
             if (this.props.post.sourceID === null) {
                 this.props.getSourceID();
-                this.setState({ tempFiles: [...e.target.files] });
+                this.setState({
+                    tempFiles: [...e.target.files],
+                });
             }
             //else uploding directly
             else {
@@ -200,7 +179,9 @@ class PostModal extends Component {
         }
         //case for text input
         else {
-            this.setState({ [e.target.name]: e.target.value });
+            this.setState({
+                [e.target.name]: e.target.value,
+            });
         }
 
     }
@@ -226,7 +207,6 @@ class PostModal extends Component {
             title: '',
             content: '',
             tempFiles: null,
-            msg: null,
         });
         this.props.endPost();
     }
@@ -243,7 +223,6 @@ class PostModal extends Component {
                 <Fab color="secondary" onClick={this.toggle}>
                     <EditIcon />
                 </Fab>
-                <Errors msg={this.state.msg} />
                 <Dialog
                     open={this.state.modal}
                     fullWidth={true}
@@ -311,10 +290,10 @@ class PostModal extends Component {
                                                 <DialogTitle >Pick emotes</DialogTitle>
                                                 <DialogContent>
                                                     <GridList cellHeight={40} cols={8} spacing={0}>
-                                                        {this.state.emoji.map(emoji => (
+                                                        {emoji.map(element => (
                                                             <GridListTile >
                                                                 <Button variant="text" onClick={((e) => this.pickEmoji(e, emoji))} color="primary">
-                                                                    {emoji}
+                                                                    {element}
                                                                 </Button>
                                                                 {/* <h3 onClick={((e) => this.pickEmoji(e, emoji))}>{emoji}</h3> */}
                                                             </GridListTile>
@@ -391,19 +370,17 @@ class PostModal extends Component {
 PostModal.propTypes = {
     post: PropTypes.object.isRequired,
     auth: PropTypes.object.isRequired,
-    error: PropTypes.object,
     uploadPost: PropTypes.func.isRequired,
+    endPost: PropTypes.func.isRequired,
     addFiles: PropTypes.func.isRequired,
     getSourceID: PropTypes.func.isRequired,
-    clearErrors: PropTypes.func.isRequired
 }
 
 // User ID in auth is essential for inserting post into DB
 const mapStateToProps = (state) => ({
     post: state.post,
     auth: state.auth,
-    error: state.error
 });
 
 PostModal = withStyles(styles)(PostModal);
-export default connect(mapStateToProps, { uploadPost, endPost, addFiles, getSourceID, clearErrors })(PostModal);
+export default connect(mapStateToProps, { uploadPost, endPost, addFiles, getSourceID })(PostModal);
