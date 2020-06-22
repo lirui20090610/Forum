@@ -114,140 +114,164 @@ class RegisterModal extends Component {
         //Attempt to register
         this.props.register(newUser);
         this.props.history.push('/');
-
+    }
+    validateEmail = (e) => {
+        e.preventDefault();
+        console.log(this.state.email);
     }
 
     render() {
         const { classes } = this.props;
-        const { } = this.props.auth;
+        const { validEmail } = this.props.auth;
+        let registerPage;
+        if (validEmail) {
+            registerPage = (
+                <div className={classes.paper} >
+                    <IconButton onClick={this.toggle} className={classes.CloseButton}>
+                        <CloseIcon />
+                    </IconButton>
+                    <Avatar className={classes.avatar}>
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Sign up
+                                </Typography>
+                    {/* <Typography component="h5" variant="b1">
+                                    Validate your email to register a PandaPressX account.
+                                </Typography> */}
+                    <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    autoComplete="fname"
+                                    name="firstName"
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    id="firstName"
+                                    label="First Name"
+                                    autoFocus
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    id="lastName"
+                                    label="Last Name"
+                                    name="lastName"
+                                    autoComplete="lname"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email Address"
+                                    name="email"
+                                    autoComplete="email"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="current-password"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControlLabel
+                                    control={<Checkbox value="allowExtraEmails" color="primary" />}
+                                    label="I want to receive inspiration, marketing promotions and updates via email."
+                                />
+                            </Grid>
+                        </Grid>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={classes.submit}
+                        >
+                            Sign Up
+                                    </Button>
+                    </form>
+                </div>
+            )
+        } else {
+            registerPage = (
+                <div className={classes.paper} >
+                    <IconButton onClick={this.toggle} className={classes.CloseButton}>
+                        <CloseIcon />
+                    </IconButton>
+                    <Avatar className={classes.avatar}>
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Validate  your email
+                    </Typography>
+                    <form className={classes.form} noValidate onSubmit={this.validateEmail} onChange={this.onChange}>
+                        {/* <Grid container>
+                            <Grid item xs={12} > */}
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email Address"
+                            name="email"
+                            autoComplete="email"
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={classes.submit}
+                        >
+                            Validate email
+                    </Button>
+                        {/* </Grid> */}
+                        <Grid container justify="flex-end">
+                            <Grid item>
+                                <Link component={RouterLink} to="/login" onClick={this.toggle} >
+                                    Already have an account? Sign in
+                        </Link>
+                            </Grid>
+                        </Grid>
+                    </form>
+                </div>
+            )
+        }
 
         return (
 
-            <Container maxWidth="xs">
+            <Container maxWidth="sm">
                 <CssBaseline />
                 <Button variant="contained" color="primary" onClick={this.toggle} >
                     Register
                 </Button>
-                <Dialog open={this.state.modal} >
+                <Dialog open={this.state.modal} maxWidth="sm" fullWidth>
                     <Grid container className={classes.root}>
                         <Grid item xs={false} sm={4} md={4} className={classes.image} />
                         <Grid item xs={12} sm={8} md={8} component={Paper} elevation={6} square>
 
-                            <div className={classes.paper} >
-                                <IconButton onClick={this.toggle} className={classes.CloseButton}>
-                                    <CloseIcon />
-                                </IconButton>
-                                <Avatar className={classes.avatar}>
-                                    <LockOutlinedIcon />
-                                </Avatar>
-                                <Typography component="h1" variant="h5">
-                                    Sign up
-                                </Typography>
-                                {/* <Typography component="h5" variant="b1">
-                                    Validate your email to register a PandaPressX account.
-                                </Typography> */}
-                                <form className={classes.form} noValidate onSubmit={this.onSubmit} onChange={this.onChange}>
-                                    <Grid container spacing={2}>
-                                        <Grid item xs={12} sm={6}>
-                                            <TextField
-                                                autoComplete="fname"
-                                                name="firstName"
-                                                variant="outlined"
-                                                required
-                                                fullWidth
-                                                id="firstName"
-                                                label="First Name"
-                                                autoFocus
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12} sm={6}>
-                                            <TextField
-                                                variant="outlined"
-                                                required
-                                                fullWidth
-                                                id="lastName"
-                                                label="Last Name"
-                                                name="lastName"
-                                                autoComplete="lname"
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                variant="outlined"
-                                                required
-                                                fullWidth
-                                                id="email"
-                                                label="Email Address"
-                                                name="email"
-                                                autoComplete="email"
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                variant="outlined"
-                                                required
-                                                fullWidth
-                                                name="password"
-                                                label="Password"
-                                                type="password"
-                                                id="password"
-                                                autoComplete="current-password"
-                                            />
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <FormControlLabel
-                                                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                                                label="I want to receive inspiration, marketing promotions and updates via email."
-                                            />
-                                        </Grid>
-                                    </Grid>
-
-                                    <Button
-                                        type="submit"
-                                        fullWidth
-                                        variant="contained"
-                                        color="primary"
-                                        className={classes.submit}
-                                    >
-                                        Sign Up
-                                    </Button>
-                                    {/* <Grid item xs={12} cols={10}>
-                                            <TextField
-                                                variant="outlined"
-                                                required
-                                                fullWidth
-                                                id="email"
-                                                label="Email Address"
-                                                name="email"
-                                                autoComplete="email"
-                                            />
-                                        </Grid>
-                                        <Button
-                                            type="submit"
-                                            fullWidth
-                                            variant="contained"
-                                            color="primary"
-                                            className={classes.submit}
-                                        >
-                                            Validate email
-                                        </Button>
-                                    </Grid> */}
-                                    <Grid container justify="flex-end">
-                                        <Grid item>
-                                            <Link component={RouterLink} to="/login" onClick={this.toggle} >
-                                                Already have an account? Sign in
-                                        </Link>
-                                        </Grid>
-                                    </Grid>
-                                </form>
-                            </div>
+                            {registerPage}
                             <Box mt={5}>
                                 <Copyright />
                             </Box>
                         </Grid>
                     </Grid>
                 </Dialog>
-            </Container>
+            </Container >
         );
     }
 }
