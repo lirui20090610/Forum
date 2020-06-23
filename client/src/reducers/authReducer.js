@@ -61,6 +61,17 @@ export default function (state = initialState, action) {
                 loadingUser: false
             };
 
+        case EMAIL_VALIDATING:
+            return {
+                ...state,
+                validatingEmail: true
+            }
+
+        case EMAIL_INVALID:
+            return {
+                ...state,
+                validatingEmail: false
+            }
         default:
             return state
     }

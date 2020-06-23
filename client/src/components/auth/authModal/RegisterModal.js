@@ -18,12 +18,14 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Copyright from '../../common/Copyright';
 import Errors from '../../common/Errors';
-import { register } from '../../../actions/authActions';
+import { register, validateEmail } from '../../../actions/authActions';
 import { clearErrors } from '../../../actions/errorActions';
 
 
@@ -67,6 +69,7 @@ const styles = theme => ({
 
 });
 
+const resendTimer = 5;
 
 class RegisterModal extends Component {
     state = {
@@ -75,6 +78,7 @@ class RegisterModal extends Component {
         lastName: '',
         email: '',
         password: '',
+        countdown: resendTimer
     }
 
 
@@ -84,6 +88,20 @@ class RegisterModal extends Component {
             : null
     }
     componentDidUpdate(prevProps) {
+        const { validatingEmail } = this.props.auth;
+        if (validatingEmail) {
+            if (this.state.countdown === resendTimer) {
+                this.timer = setInterval(() => {
+                    const newCount = this.state.countdown - 1;
+                    this.setState(
+                        { countdown: newCount }
+                    );
+                }, 1000);
+            } else if (this.state.countdown === 0) {
+                clearInterval(this.timer);
+            }
+
+        }
 
     }
 
@@ -117,13 +135,19 @@ class RegisterModal extends Component {
     }
     validateEmail = (e) => {
         e.preventDefault();
-        console.log(this.state.email);
+        this.props.validateEmail(this.state.email);
+    }
+    resendCode = (e) => {
+        e.preventDefault();
+        this.setState(
+            { countdown: resendTimer }
+        );
     }
 
     render() {
         const { classes } = this.props;
-        const { validEmail } = this.props.auth;
-        let registerPage;
+        const { validEmail, validatingEmail } = this.props.auth;
+        let registerPage, codeTimer;
         if (validEmail) {
             registerPage = (
                 <div className={classes.paper} >
@@ -206,7 +230,39 @@ class RegisterModal extends Component {
                     </form>
                 </div>
             )
-        } else {
+        } else if (validatingEmail) {
+            if (this.state.countdown === 0) {
+                codeTimer = (
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        onClick={this.resendCode}
+                    >
+                        resend
+                    </Button>
+                )
+            } else {
+                codeTimer = (
+                    <Box position="relative" display="inline-flex">
+                        <CircularProgress variant="static" value={this.state.countdown / resendTimer * 100} />
+                        <Box
+                            top={0}
+                            left={0}
+                            bottom={0}
+                            right={0}
+                            position="absolute"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                        >
+                            <Typography variant="caption" component="div" color="textSecondary">
+                                {this.state.countdown + 's'}
+                            </Typography>
+                        </Box>
+                    </Box>
+                )
+            }
             registerPage = (
                 <div className={classes.paper} >
                     <IconButton onClick={this.toggle} className={classes.CloseButton}>
@@ -216,7 +272,62 @@ class RegisterModal extends Component {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Validate  your email
+                        Verify email
+                    </Typography>
+                    <form className={classes.form} noValidate onSubmit={this.validateEmail} onChange={this.onChange}>
+                        <Grid container spacing={2} alignItems="center">
+                            <Grid item xs={12}>
+                                <Typography component="h1" variant="body1" color="primary" gutterBottom>
+                                    Please enter the code we sent to your email
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={9} >
+                                <TextField
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    id="verification code"
+                                    label="Verification code"
+                                    name="verification code"
+                                />
+                            </Grid>
+                            <Grid item xs={3} >
+                                {codeTimer}
+
+                            </Grid>
+
+                        </Grid>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={classes.submit}
+                        >
+                            submit
+                    </Button>
+                        {/* </Grid> */}
+                        <Grid container justify="flex-end">
+                            <Grid item>
+                                <Link component={RouterLink} to="/login" onClick={this.toggle} >
+                                    Already have an account? Sign in
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </form>
+                </div>
+            )
+        } else if (!validatingEmail) {
+            registerPage = (
+                <div className={classes.paper} >
+                    <IconButton onClick={this.toggle} className={classes.CloseButton}>
+                        <CloseIcon />
+                    </IconButton>
+                    <Avatar className={classes.avatar}>
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Verify  your email
                     </Typography>
                     <form className={classes.form} noValidate onSubmit={this.validateEmail} onChange={this.onChange}>
                         {/* <Grid container>
@@ -291,4 +402,4 @@ const mapStateToProps = (state) => ({
 
 RegisterModal = withRouter(RegisterModal);
 RegisterModal = withStyles(styles)(RegisterModal);
-export default connect(mapStateToProps, { register })(RegisterModal);
+export default connect(mapStateToProps, { register, validateEmail })(RegisterModal);

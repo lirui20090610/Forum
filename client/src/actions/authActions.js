@@ -106,7 +106,31 @@ export const login = ({ email, password }) => dispatch => {
 
 
 
+export const validateEmail = (email) => dispatch => {
+    // Headers
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
 
+    // Request body
+    const body = JSON.stringify({ email });
+
+    axios.post('/api/users/email', body, config)
+        .then(res => {
+            console.log(res);
+            dispatch({
+                type: EMAIL_VALIDATING
+            })
+        })
+        .catch(err => {
+            dispatch(returnErrors(err.response.data.msg));
+            dispatch({
+                type: EMAIL_INVALID
+            });
+        });
+}
 
 // Logout User
 export const logout = () => {
