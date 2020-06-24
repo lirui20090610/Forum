@@ -25,7 +25,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Copyright from '../../common/Copyright';
 import Errors from '../../common/Errors';
-import { register, validateEmail } from '../../../actions/authActions';
+import { register, validateEmail, resend } from '../../../actions/authActions';
 import { clearErrors } from '../../../actions/errorActions';
 
 
@@ -82,14 +82,27 @@ class RegisterModal extends Component {
     }
 
 
-    componentWillReceiveProps() {
+    componentWillReceiveProps(prevProps) {
+
         this.props.history.location.pathname === '/signup' ?
             this.setState({ modal: true })
+
             : null
     }
     componentDidUpdate(prevProps) {
         const { validatingEmail } = this.props.auth;
+        // if (this.props.match !== prevProps.match) {
+        //     let difference = Object.keys(this.props.match).filter(k => this.props.match[k] !== prevProps.match[k]);
+        //     console.log(difference);
+        //     console.log(prevProps.match);
+        //     console.log(this.props.match);
+        // }
+        // console.log("update");
+
+        // console.log(prevProps.match);
+        // console.log(this.props.match);
         if (validatingEmail) {
+
             if (this.state.countdown === resendTimer) {
                 this.timer = setInterval(() => {
                     const newCount = this.state.countdown - 1;
@@ -100,7 +113,6 @@ class RegisterModal extends Component {
             } else if (this.state.countdown === 0) {
                 clearInterval(this.timer);
             }
-
         }
 
     }
@@ -139,12 +151,14 @@ class RegisterModal extends Component {
     }
     resendCode = (e) => {
         e.preventDefault();
+        this.props.resend(this.state.email);
         this.setState(
             { countdown: resendTimer }
         );
     }
 
     render() {
+
         const { classes } = this.props;
         const { validEmail, validatingEmail } = this.props.auth;
         let registerPage, codeTimer;
@@ -402,4 +416,4 @@ const mapStateToProps = (state) => ({
 
 RegisterModal = withRouter(RegisterModal);
 RegisterModal = withStyles(styles)(RegisterModal);
-export default connect(mapStateToProps, { register, validateEmail })(RegisterModal);
+export default connect(mapStateToProps, { register, validateEmail, resend })(RegisterModal);

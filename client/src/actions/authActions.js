@@ -105,7 +105,7 @@ export const login = ({ email, password }) => dispatch => {
 }
 
 
-
+// verify users' email
 export const validateEmail = (email) => dispatch => {
     // Headers
     const config = {
@@ -130,6 +130,26 @@ export const validateEmail = (email) => dispatch => {
                 type: EMAIL_INVALID
             });
         });
+
+}
+
+// resend verificaiton code to users' email
+export const resend = (email) => (dispatch, getState) => {
+    // Headers
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    axios.get(`/api/users/resend/${email}`, config)
+        .then(res => {
+            console.log(res);
+            dispatch({
+                type: EMAIL_VALIDATING
+            })
+        })
+
 }
 
 // Logout User

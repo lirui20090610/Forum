@@ -11,6 +11,7 @@ const User = require('../../models/User');
 //EMAIL Model
 const Email = require('../../models/Email');
 
+
 // Email acount setting
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -21,7 +22,10 @@ const transporter = nodemailer.createTransport({
 });
 
 // Verification Code expire time 1s*60*10
-const verificationCodeEXpire = 1000 * 60 * 10;
+const verificationCodeEXpire = 1000;
+
+// Verification Code expire timer
+let verificationTimer;
 
 // @route Post api/users
 // @desc Register new user
@@ -107,20 +111,9 @@ router.post('/email', (req, res) => {
                 text: `Verification code is ${verificationCode}, it is valid in 10 mins.`
             };
 
-            // save users' email and the temporary verification code to the DB 
-            const newEmail = new Email({
-                email,
-                verificationCode
-            });
-
-            newEmail.save().then(dbEmail =>
-                console.log(dbEmail.email)
-            )
-
             transporter.sendMail(mailOptions, (error, info) => {
 
-                setTimeout(() => {
-                    console.log(email);
+                verificationTimer = setTimeout(() => {
                     Email.findOne({ email }).then(dbEmail => {
                         if (dbEmail) {
                             dbEmail.remove();
@@ -133,9 +126,84 @@ router.post('/email', (req, res) => {
                     console.log('Email sent: ' + info.response);
                 }
             });
-        })
 
+
+            // save users' email and the temporary verification code to the DB 
+            const newEmail = new Email({
+                email,
+                verificationCode
+            });
+
+            newEmail.save().then(dbEmail =>
+                console.log(dbEmail.email)
+            )
+
+
+        })
+});
+
+
+// @route Post api/users/verificationcode
+// @desc Validate user's email verification code
+// @access Public
+router.post('/verificationcode', (req, res) => {
+
+    const { email, code } = req.body;
+    // console.log(email);
+    // Simple validation
+    if (!code) {
+        return res.status(400).json({ msg: 'Please enter the verification code.' });
+    }
+    // Check for existing email
+    Email.findOne({ email })
+        .then(dbEmail => {
+            if (dbEmail.verificationCode !== code) return res.status(400).json({ msg: 'Invalid verification code' });
+            res.json({ msg: 'valid email, verification code is checked.' });
+            clearTimeout(verificationTimer);
+            Email.updateOne({ _id: dbEmail._id }, { $unset: { verificationCode: "" } })
+                .then()
+                .catch(err => console.log(err));
+        });
+});
+
+
+// @route GET api/users/resend/:email
+// @desc resend verification code
+// @access Public
+router.get('/resend/:email', (req, res) => {
+    let email = req.params.email;
+
+    let verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    let mailOptions = {
+        //This doesn't work for Gmail, Gmail would replace it with actual user automatically.
+        from: 'Panda@PandaPressX.com',
+        to: email,
+        subject: 'Panda Press X',
+        text: `Verification code is ${verificationCode}, it is valid in 10 mins.`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+
+        verificationTimer = setTimeout(() => {
+            Email.findOne({ email }).then(dbEmail => {
+                if (dbEmail) {
+                    dbEmail.remove();
+                }
+            })
+        }, verificationCodeEXpire);
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+
+    res.json({ msg: 'verification code is resent.' });
 
 
 });
+
+
+
 module.exports = router;

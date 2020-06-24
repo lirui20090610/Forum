@@ -116,7 +116,6 @@ class PostModal extends Component {
         emojiModal: false,
     }
     componentDidUpdate(prevProps) {
-
         const { sourceID, loadingSourceID } = this.props.post;
 
         if (sourceID !== null && !loadingSourceID && this.state.tempFiles !== null) {

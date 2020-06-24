@@ -81,7 +81,6 @@ class LoginModal extends Component {
     }
 
     componentDidUpdate(prevProps) {
-
     }
 
     toggle = () => {

@@ -5,6 +5,7 @@ import {
     EMAIL_VALIDATING,
     EMAIL_VALID,
     EMAIL_INVALID,
+    RESEND_CODE,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     LOGOUT_SUCCESS,
@@ -19,6 +20,7 @@ const initialState = {
     loadingUser: false,
     validatingEmail: false,
     validEmail: false,
+    isResent: false,
     email: null
 }
 
