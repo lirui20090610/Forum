@@ -6,12 +6,15 @@ import {
     EMAIL_VALIDATING,
     EMAIL_VALID,
     EMAIL_INVALID,
+    RESEND_CODE,
+    RESEND_DONE,
     AUTH_ERROR,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     LOGOUT_SUCCESS,
     REGISTER_SUCCESS,
-    REGISTER_FAIL
+    REGISTER_FAIL,
+
 } from '../actions/types';
 
 
@@ -146,10 +149,15 @@ export const resend = (email) => (dispatch, getState) => {
         .then(res => {
             console.log(res);
             dispatch({
-                type: EMAIL_VALIDATING
+                type: RESEND_CODE
             })
         })
 
+}
+export const resetResent = () => (dispatch) => {
+    dispatch({
+        type: RESEND_DONE
+    })
 }
 
 // Logout User

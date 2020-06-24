@@ -6,6 +6,7 @@ import {
     EMAIL_VALID,
     EMAIL_INVALID,
     RESEND_CODE,
+    RESEND_DONE,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     LOGOUT_SUCCESS,
@@ -73,6 +74,17 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 validatingEmail: false
+            }
+
+        case RESEND_CODE:
+            return {
+                ...state,
+                isResent: true
+            }
+        case RESEND_DONE:
+            return {
+                ...state,
+                isResent: false
             }
         default:
             return state
